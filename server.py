@@ -1,19 +1,20 @@
 import json
 file1 = open("info_about_lunch.txt","r")
-dic1=file1.read()
-dic2=json.loads(dic1)
+data_string=file1.read()
+data_dictionary=json.loads(data_string)
 
 print("if you want to check the menu for ten days, Select numbers from 0-9 \nif you want to exit press any other number")
-a=0
-b=""
-c=[]
+key=0
+value=""
+value_list=[]
 
-while(int(a)>=0 and int(a)<=9):
-    a = input()
+while(int(key)>=0 and int(key)<=9):
+    key = input()
     
-    if int(a)>=0 and int(a)<=9:
-        b = dic2[a]
-        c=b.split("-")
-        print("The day You selected is "+c[0]+" and the lunch today is "+ c[1]+"\n")
+    if int(key)>=0 and int(key)<=9:
+        value = data_dictionary[key]
+        value_list=value.split("-")
+        print("The day You selected is "+value_list[0]+" and the lunch today is "+ value_list[1]+"\n")
+        print("____________________\n") #adding a seperating line between questions asked
         print("Again, if you want to check the menu for ten days, Select numbers from 0-9 \nif you want to exit press any other number")
 
