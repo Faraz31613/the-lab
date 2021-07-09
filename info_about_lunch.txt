@@ -1,0 +1,1 @@
+{"1" : "Monday-Chicken Tikka", "2" : "Tuesday-Chicken Kabab", "3" : "Wednesday-Chicken Krahi", "4" : "Thursday-Chicken Korma", "5" : "Friday-Chicken Biryani", "6" : "Saturday-Chicken Tikka", "7" : "Sunday-Chicken Shashlik", "8" : "Monday-Chicken Shorba", "9" : "Tuesday-Chicken soup", "0" : "Wednesday-Chicken Biryani"}
