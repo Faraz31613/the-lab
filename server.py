@@ -1,25 +1,39 @@
-import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import parse_qs
+import json
 from file_manager import FileManager
 
-data_string = ""
-with FileManager('info_about_lunch.txt', 'r') as lunch_details_file:
-    data_string=lunch_details_file.read()
 
-data_dictionary=json.loads(data_string)
+class MessageHandler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        # 1. How long was the message? (Use the Content-Length header.)
+        length = int(self.headers.get('Content-length', 0))
 
-print("If you want to check the menu for ten days, Select numbers from 0-9 \nIf you want to exit press any other number")
-key=0
-lunch_according_day=""
-lunch_according_day_list=[]
+        # 2. Read the correct amount of data from the request.
+        data = self.rfile.read(length).decode()
 
-while(int(key)>=0 and int(key)<=9):
-    key = input()
-    
-    if int(key)>=0 and int(key)<=9:
-        lunch_according_day = data_dictionary[key]
+        # 3. Extract the "message" field from the request data.
+        menu_number = parse_qs(data)["menu_number"][0]
+
+        # Send the "message" field back as the response.
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain; charset=utf-8')
+        self.end_headers()
+      
+
+        data_string = ""
+        with FileManager('info_about_lunch.txt', 'r') as lunch_details_file:
+            data_string=lunch_details_file.read()
+
+        data_dictionary=json.loads(data_string)
+
+        lunch_according_day = data_dictionary[menu_number]
         lunch_according_day_list=lunch_according_day.split("-")
-        print("The day You selected is "+lunch_according_day_list[0]+" and the lunch today is "+ lunch_according_day_list[1]+"\n")
-        print("____________________\n") #adding a seperating line between questions asked
-        print("Again, If you want to check the menu for ten days, Select numbers from 0-9 \nIf you want to exit press any other number")
+        menu_u_selected="The day You selected is "+lunch_according_day_list[0]+" and the lunch today is "+ lunch_according_day_list[1]+"\n"
+        self.wfile.write(menu_u_selected.encode())
 
+
+if __name__ == '__main__':
+    server_address = ('', 8080)
+    httpd = HTTPServer(server_address, MessageHandler)
+    httpd.serve_forever()
