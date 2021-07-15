@@ -1,6 +1,9 @@
+from typing import Any
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
+
+from .models import Post
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -20,3 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password')
+
+class MakePostSerializer(serializers.ModelSerializer):
+    text_post = serializers.CharField(max_length=500)
+
+    def add_post(self,validated_data):
+        post = Post.objects.create(validated_data['text_post'])
+        return post
+
+    class Meta:
+        model = Post
+        fields = ('id','text_post')
