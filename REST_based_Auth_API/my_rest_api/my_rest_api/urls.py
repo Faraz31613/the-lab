@@ -24,9 +24,13 @@ from core import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/',views.HelloView.as_view(),name='hello'),
-    path('register/',views.RegisterUser.as_view(),name='register'),
-    path('make_post/',views.MakePost.as_view(),name='make_post'),
-    path('get_users/',views.GetUsers.as_view(),name='get_users'),
+    path('register/',views.RegisterUser.as_view({'post': 'list'}),name='register'),
+    path('make_post/',views.MakePost.as_view({'post': 'list'}),name='make_post'),
+    path('make_comment/',views.MakeComment.as_view({'post': 'list'}),name='make_comment'),
+    path('get_users/',views.GetUsers.as_view({'get': 'list'}),name='get_users'),
+    path('send_request/',views.SendRequest.as_view({'post': 'list'}),name='send_request'),
+    path('get_request/',views.GetRequest.as_view({'get': 'list'}),name='get_request'),
+    path('change_status/',views.ChangeStatus.as_view({'put': 'list'}),name='change_status'),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
