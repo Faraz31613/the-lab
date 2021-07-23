@@ -1,140 +1,118 @@
+from decimal import Context
 import json
 
 from django.db.models.expressions import OrderBy
 from django.http import request
 from django.shortcuts import render
 
-from rest_framework import status
-from rest_framework import serializers,viewsets
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView
+from rest_framework import generics
+from rest_framework.fields import NullBooleanField
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Comment, Post, Request
-from .serializers import make_comment_serializer, user_serializer, make_post_serializer, send_request_serializer, change_request_status
+from .serializers import (
+    CommentSerializer,
+    FriendsSerializer,
+    UserSerializer,
+    PostSerializer,
+    RequestSerializer,
+    ChangeRequestStatusSerializer,
+    MyTokenObtainPairSerializer,
+)
 
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class HelloView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self,request):
-        content = {"message" : "Hello Faraz!"}
+    def get(self, request):
+        content = {"message": "Hello Faraz!"}
         return Response(content)
 
 
-class RegisterUser(viewsets.ModelViewSet):
-    serializer_class= user_serializer
-    permission_classes=(IsAuthenticated,)
-    #queryset = User.objects.all()
+class RegisterUserView(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+    queryset = User.objects.all()
 
-    @action(methods=["Post"],detail=True)
-    def get_queryset(self):
-        print("hello")
-        serializer = user_serializer(data=self.request.data)
-        serializer_is_valid=serializer.is_valid(raise_exception=True)
-        if serializer_is_valid:
-            user = serializer.save()
-            if user:
-                return User.objects.filter().order_by('-id')[:1]
-        
-        return None
-        
-  
-class GetUsers(viewsets.ModelViewSet):
-    serializer_class= user_serializer
-    permission_classes=(IsAuthenticated,)
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(self.serializer_class(user).data)
+
+
+class GetUsersView(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
 
 
-class MakePost(viewsets.ModelViewSet):
-    serializer_class= make_post_serializer
-    permission_classes=(IsAuthenticated,)
-    #queryset = User.objects.all()
+class PostView(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
 
-    @action(methods=["Post"],detail=True)
     def get_queryset(self):
-        serializer = make_post_serializer(data=self.request.data)
-        serializer_is_valid=serializer.is_valid(raise_exception=True)
-        if serializer_is_valid:
-            user = serializer.save()
-            if user:
-                return Post.objects.filter().order_by('-id')[:1]
-        
-        return None
+        user = self.request.user
+        return self.queryset.filter(user=user)
 
 
-class MakeComment(viewsets.ModelViewSet):
-    serializer_class= make_comment_serializer
-    permission_classes=(IsAuthenticated,)
-    #queryset = User.objects.all()
+class CommentView(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Comment.objects.all()
 
-    @action(methods=["Post"],detail=True)
     def get_queryset(self):
-        print("hello")
-        serializer = make_comment_serializer(data=self.request.data)
-        serializer_is_valid=serializer.is_valid(raise_exception=True)
-        if serializer_is_valid:
-            user = serializer.save()
-            if user:
-                return Comment.objects.filter().order_by('-id')[:1]
-        
-        return None
+        return self.queryset.filter(post=self.request.data["post"])
 
- 
-class SendRequest(viewsets.ModelViewSet):
-    serializer_class= send_request_serializer
-    permission_classes=(IsAuthenticated,)
-    #queryset = User.objects.all()
 
-    @action(methods=["Post"],detail=True)
+class RequestView(viewsets.ModelViewSet):
+    serializer_class = RequestSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Request.objects.all()
+
     def get_queryset(self):
-        friend_request_exists = Request.objects.filter(requestee_id=self.request.data['requestee'])
-        if friend_request_exists.exists():
-            return None
-        serializer = send_request_serializer(data=self.request.data)
-        serializer_is_valid=serializer.is_valid(raise_exception=True)
-        if serializer_is_valid:
-            request = serializer.save()
-            if request:
-                return Request.objects.filter().order_by('-id')[:1]
+        return self.queryset.filter(
+            requestee_id=int(self.request.data["requestor"]), status="P"
+        )  # or 'R')
+
+
+class ChangeStatusView(generics.GenericAPIView):
+    serializer_class = ChangeRequestStatusSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Request.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        user_signed_in = request.user.id
+        request = Request.objects.get(pk=request.data["id"])
         
-        return None
+        if self.request.data["status"] != "P" and request.requestee_id == user_signed_in:
+            data = self.queryset.filter(pk=self.request.data["id"]).update(
+                status=self.request.data["status"]
+            )
+            # Request.objects.filter(pk=self.request.data['id']).delete()
+            data = self.serializer_class(
+                Request.objects.get(pk=self.request.data["id"])
+            )
+            return Response(data.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+class ShowFriendsView(viewsets.ModelViewSet):
+    serializer_class = FriendsSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Request.objects.filter(status='A')
 
-class GetRequest(viewsets.ModelViewSet):
-    serializer_class= send_request_serializer
-    permission_classes=(IsAuthenticated,)
-
-    @action(methods=["get"],detail=True)
-    def get_queryset(self):  
-        requests_data = None
-        
-        data_dictionary = json.loads(self.request.body)
-        requestee_or_requestor = []
-
-        for key in data_dictionary.keys():
-            requestee_or_requestor.append(key)
-            
-        if requestee_or_requestor[0]=='requestee':
-            requests_data = Request.objects.filter(requestee_id=int(self.request.data['requestee']))  
-        elif requestee_or_requestor[0]=='requestor':
-            requests_data = Request.objects.filter(requestor_id=int(self.request.data['requestor']))
-        return requests_data
-        
-
-class ChangeStatus(viewsets.ModelViewSet):
-    serializer_class= send_request_serializer
-    permission_classes=(IsAuthenticated,)
+    def get_queryset(self):
+        return self.queryset.filter(requestee=self.request.user.id) | self.queryset.filter(requestor=self.request.user.id)
     
-    @action(methods=["Put"],detail=True)
-    def get_queryset(self):
-        #if(self.request.data['status']=='Rejected'):
-        data = Request.objects.filter(pk=self.request.data['id']).update(status=self.request.data['status'])
-            #Request.objects.filter(pk=self.request.data['id']).delete()
-        return Request.objects.filter(pk=self.request.data['id'])
-        
