@@ -15,7 +15,7 @@ NEWSPIDER_MODULE = 'web_crawler.spiders'
 # EXTENSIONS = {
 #    'scrapy.extensions.closespider.CloseSpider': 2,
 # }
-CLOSESPIDER_ITEMCOUNT = 1  #312,313=>313  ,314=>changes number to 760+ , 760=>1800+
+CLOSESPIDER_ITEMCOUNT = 314  #312,313=>313  ,314=>750
 #CLOSESPIDER_PAGECOUNT=1
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'web_crawler (+http://www.yourdomain.com)'
@@ -31,8 +31,8 @@ CONCURRENT_REQUESTS = 1
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY = 0
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+#CONCURRENT_REQUESTS_PER_DOMAIN = 16
+CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
@@ -66,9 +66,10 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 16
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'web_crawler.pipelines.WebCrawlerPipeline': 300,
-#}
+# ITEM_PIPELINES = {
+#    #'web_crawler.pipelines.WebCrawlerPipeline': 300,
+#    "web_crawler.pipelines.WebCrawlerPipeline":300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
