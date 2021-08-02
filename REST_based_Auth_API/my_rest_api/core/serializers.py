@@ -1,9 +1,10 @@
+from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Comment, Post, Request
+from .models import Comment, Notification, Post, Request, Friend
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -58,5 +59,11 @@ class ChangeRequestStatusSerializer(serializers.ModelSerializer):
 class FriendsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Request
-        fields = ("status", "requestee","requestor")
+        model = Friend
+        fields = ("user","friend", "status")
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = {"id","user","notification"}

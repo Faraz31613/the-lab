@@ -26,6 +26,7 @@ from .serializers import (
     ChangeRequestStatusSerializer,
     MyTokenObtainPairSerializer,
 )
+from .utilities import create_notification
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -77,15 +78,39 @@ class CommentView(viewsets.ModelViewSet):
         return self.queryset.filter(post=self.request.data["post"])
 
 
-class RequestView(viewsets.ModelViewSet):
+# class RequestView(viewsets.ModelViewSet):
+#     serializer_class = RequestSerializer
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Request.objects.all()
+
+#     def get_queryset(self):
+#         return self.queryset.filter(
+#             requestee_id=int(self.request.data["requestor"]), status="P"
+#         )  # or 'R')
+
+
+class RequestView(generics.GenericAPIView):
     serializer_class = RequestSerializer
     permission_classes = (IsAuthenticated,)
     queryset = Request.objects.all()
 
-    def get_queryset(self):
+    # def get_queryset(self):
+    #     return self.queryset.filter(
+    #         requestee_id=int(self.request.data["requestor"]), status="P"
+    #     )  # or 'R')
+    def get(self, request, *args, **kwargs):
         return self.queryset.filter(
             requestee_id=int(self.request.data["requestor"]), status="P"
-        )  # or 'R')
+        )
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        # create_notification(
+        #     self.request.data["requestee"],
+        # )
+        user = serializer.save()
+        return Response(self.serializer_class(user).data)
 
 
 class ChangeStatusView(generics.GenericAPIView):
@@ -96,8 +121,11 @@ class ChangeStatusView(generics.GenericAPIView):
     def put(self, request, *args, **kwargs):
         user_signed_in = request.user.id
         request = Request.objects.get(pk=request.data["id"])
-        
-        if self.request.data["status"] != "P" and request.requestee_id == user_signed_in:
+
+        if (
+            self.request.data["status"] != "P"
+            and request.requestee_id == user_signed_in
+        ):
             data = self.queryset.filter(pk=self.request.data["id"]).update(
                 status=self.request.data["status"]
             )
@@ -108,11 +136,28 @@ class ChangeStatusView(generics.GenericAPIView):
             return Response(data.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+
 class ShowFriendsView(viewsets.ModelViewSet):
     serializer_class = FriendsSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = Request.objects.filter(status='A')
+    queryset = Request.objects.filter(status="A")
 
-    def get_queryset(self):
-        return self.queryset.filter(requestee=self.request.user.id) | self.queryset.filter(requestor=self.request.user.id)
-    
+    def get_queryset(self):  # (self, request, *args, **kwargs):
+        friend_list = []
+        user_signed_in_id = self.request.user.id
+        user_signed_in = self.request.user
+        friends_info = self.queryset.filter(
+            requestee=user_signed_in_id
+        ) | self.queryset.filter(requestor=user_signed_in_id)
+        for friendship in friends_info:
+            friend = {}
+            if friendship.requestee_id == user_signed_in_id:
+                friend["user"] = user_signed_in
+                friend["friend"] = friendship.requestor
+                friend["status"] = "friends"
+            elif friendship.requestor_id == user_signed_in_id:
+                friend["user"] = user_signed_in
+                friend["friend"] = friendship.requestee
+                friend["status"] = "friends"
+            friend_list.append(friend)
+        return friend_list
