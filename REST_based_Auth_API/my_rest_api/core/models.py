@@ -49,7 +49,31 @@ class Friend(models.Model):
 
 
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=CASCADE)
+    class NotificationType:
+        REQUEST = "R"
+        LIKE = "L"
+        COMMENT = "C"
+        REPLY = "RC"
+        MESSAGE = "M"
+
+        notification_type = (
+            (REQUEST, "Request"),
+            (LIKE, "Like"),
+            (COMMENT, "Comment"),
+            (REPLY, "Reply"),
+            (MESSAGE, "Message"),
+        )
+
+    user = models.ForeignKey(
+        User, on_delete=CASCADE, related_name="notification_sent_to_user"
+    )
     notification = models.CharField(max_length=50)
     is_read = models.BooleanField(default=False)
-    # user_by = models.ForeignKey(User,on_delete=CASCADE,related_name="notification_sent_by_user")
+    user_by = models.IntegerField(null=True)
+    notification_source_id = models.IntegerField(null=True)  # id of comment,post etc.
+    notification_source_type = models.CharField(
+        choices = NotificationType.notification_type, max_length=2
+    )
+
+    def __str__(self):
+        return self.notification
