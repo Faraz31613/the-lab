@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class ResultCaluculator():
+class ResultCaluculator:
     def __init__(self):
         self.highest_temp_in_year = None
         self.lowest_temp_in_year = None

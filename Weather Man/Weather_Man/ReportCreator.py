@@ -1,13 +1,11 @@
 import os
 import sys
 
-from FileReader import FileReader
+from FileReader import FileExtractor
 from ResultCalculator import ResultCaluculator
 
 
-class ReportCreator():
-    def __init__(self):
-        pass
+class ReportCreator:
 
     def year_report(self, file_name, year, months_list):  # first test case report generator
 
@@ -25,7 +23,7 @@ class ReportCreator():
 
             month_counter = month_counter+1
 
-        data_obj = FileReader()
+        data_obj = FileExtractor()
         if len(file_paths_list) == 0:
             print("No record exists for this year, Try another year!")
         else:
@@ -55,9 +53,11 @@ class ReportCreator():
             result_calculator_obj.calculate_max_humidity_in_year(
                 highest_humidity_list, date_list_of_year)
 
+            print("Yearly Report:\n")
             print(result_calculator_obj.highest_temp_in_year)
             print(result_calculator_obj.lowest_temp_in_year)
             print(result_calculator_obj.highest_humidity_in_year)
+            print("End Of Yearly Report\n______________\n")
 
     def monthly_report(self, file_name, year, month):  # second test case report generator
 
@@ -71,7 +71,7 @@ class ReportCreator():
         if os.path.isfile(file_path):
             file_paths_list.append(file_path)
 
-        data_obj = FileReader()
+        data_obj = FileExtractor()
         if len(file_paths_list) == 0:
             print("No record exists for this year, Try another year!")
         else:
@@ -98,9 +98,11 @@ class ReportCreator():
             result_calculator_obj.calculate_avg_mean_humidity_in_month(
                 mean_humidity_list)
 
+            print("Monthly Report:\n")
             print(result_calculator_obj.avg_highest_temp_in_month)
             print(result_calculator_obj.avg_lowest_temp_in_month)
             print(result_calculator_obj.avg_mean_humidity_in_month)
+            print("End Of Monthly Report\n______________\n")
 
     def monthly_graph(self, file_name, year, month):  # second test case report generator
 
@@ -114,7 +116,7 @@ class ReportCreator():
         if os.path.isfile(file_path):
             file_paths_list.append(file_path)
 
-        data_obj = FileReader()
+        data_obj = FileExtractor()
         if len(file_paths_list) == 0:
             print("No record exists for this year, Try another year!")
         else:
@@ -133,7 +135,9 @@ class ReportCreator():
             result_calculator_obj.draw_monthly_temperature_chart(
                 highest_temp_list, lowest_temp_list)
 
+            print("Monthly Chart:\n")
             print(result_calculator_obj.monthly_temperature_chart)
+            print("End Of Monthly Chart\n______________\n")
 
     def monthly_graph_bonus_task(self, file_name, year, month):  # second test case report generator
 
@@ -147,7 +151,7 @@ class ReportCreator():
         if os.path.isfile(file_path):
             file_paths_list.append(file_path)
 
-        data_obj = FileReader()
+        data_obj = FileExtractor()
         if len(file_paths_list) == 0:
             print("No record exists for this year, Try another year!")
         else:
@@ -166,4 +170,6 @@ class ReportCreator():
             result_calculator_obj.draw_monthly_temperature_chart_bonus_task(
                 highest_temp_list, lowest_temp_list)
 
+            print("Monthly Chart:\n")
             print(result_calculator_obj.monthly_temperature_chart)
+            print("End Of Monthly Chart\n______________\n")

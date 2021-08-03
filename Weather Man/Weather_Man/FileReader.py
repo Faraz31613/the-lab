@@ -1,4 +1,4 @@
-class FileReader():
+class FileExtractor:
     def __init__(self):
         self.pkt = []
         self.max_temperature_c = []
