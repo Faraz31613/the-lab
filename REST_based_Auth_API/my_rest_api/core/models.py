@@ -72,7 +72,7 @@ class Notification(models.Model):
     user_by = models.IntegerField(null=True)
     notification_source_id = models.IntegerField(null=True)  # id of comment,post etc.
     notification_source_type = models.CharField(
-        choices = NotificationType.notification_type, max_length=2
+        choices=NotificationType.notification_type, max_length=2
     )
 
     def __str__(self):

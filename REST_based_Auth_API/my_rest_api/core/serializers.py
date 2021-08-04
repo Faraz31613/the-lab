@@ -50,20 +50,18 @@ class RequestSerializer(serializers.ModelSerializer):
 
 
 class ChangeRequestStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Request
-        fields = ("id", "status", "requestee","requestor")
-        
+        fields = ("id", "status", "requestee", "requestor")
+
 
 class FriendsSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Friend
-        fields = ("user","friend", "status")
+        fields = ("user", "friend", "status")
+
 
 class NotificationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Notification
-        fields = {"id","user","notification"}
+        fields = "__all__"

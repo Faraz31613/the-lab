@@ -16,10 +16,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import Comment, Post, Request
+from .models import Comment, Notification, Post, Request
 from .serializers import (
     CommentSerializer,
     FriendsSerializer,
+    NotificationSerializer,
     UserSerializer,
     PostSerializer,
     RequestSerializer,
@@ -77,35 +78,6 @@ class CommentView(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(post=self.request.data["post"])
 
-    # # def get(self, request, *args, **kwargs):
-    # #     data = self.serializer_class(
-    # #         Comment.objects.get(
-    # #             post=self.request.data["post"])
-    # #     )
-    # #     if data.is_valid(raise_exception=True):
-    # #         return Response(data.data, status=status.HTTP_200_OK)
-
-    # def post(self, request, *args, **kwargs):
-    #     # if self.request.data["requestee"] == self.request.data["requestor"]:
-    #     #     return Response(status=status.HTTP_400_BAD_REQUEST)
-    #     serializer = self.serializer_class(data=self.request.data)
-    #     requestor_username = ""
-    #     for username in User.objects.filter(pk=self.request.user.id):
-    #         requestor_username = username
-    #     serializer.is_valid(raise_exception=True)
-    #     create_notification(
-    #         request,
-    #         User(self.request.data["requestee"]),
-    #         "{} has commented on your post,{}".format(requestor_username,self.request.data["post"]),
-    #         "C",
-    #         self.request.user.id,
-    #         self.request.data["post"],
-    #     )
-    #     user = serializer.save()
-    #     return Response(
-    #         self.serializer_class(user).data, status=status.HTTP_201_CREATED
-    #     )
-
 
 class RequestView(generics.GenericAPIView):
     serializer_class = RequestSerializer
@@ -121,20 +93,21 @@ class RequestView(generics.GenericAPIView):
         return Response(data.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        if self.request.data["requestee"] == self.request.data["requestor"]:
+        user_signed_in = self.request.user.id
+        if user_signed_in == self.request.data["requestee"]:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer = self.serializer_class(data=self.request.data)
         requestor_username = ""
-        for username in User.objects.filter(pk=self.request.data["requestor"]):
-            requestor_username = username
+        requestor_username = User.objects.get(pk=self.request.data["requestor"])
+
         serializer.is_valid(raise_exception=True)
         create_notification(
             request,
-            User(self.request.data["requestee"]),
-            "{} has sent you a Friend Request".format(requestor_username),
-            "R",
-            self.request.data["requestor"],
-            None,
+            to_user=User(self.request.data["requestee"]),
+            notification=f"{requestor_username} has sent you a Friend Request",
+            notification_source_type="R",
+            user_by=user_signed_in,
+            notification_source_id=None,
         )
         user = serializer.save()
         return Response(
@@ -149,19 +122,18 @@ class ChangeStatusView(generics.GenericAPIView):
 
     def put(self, request, *args, **kwargs):
         user_signed_in = request.user.id
-        request = Request.objects.get(pk=request.data["id"])
+        request_id = request.data["id"]
+        request = Request.objects.get(pk=request_id)
 
         if (
             self.request.data["status"] != "P"
             and request.requestee_id == user_signed_in
         ):
-            data = self.queryset.filter(pk=self.request.data["id"]).update(
+            data = self.queryset.filter(pk=request_id).update(
                 status=self.request.data["status"]
             )
-            # Request.objects.filter(pk=self.request.data['id']).delete()
-            data = self.serializer_class(
-                Request.objects.get(pk=self.request.data["id"])
-            )
+
+            data = self.serializer_class(Request.objects.get(pk=request_id))
             return Response(data.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -190,3 +162,12 @@ class ShowFriendsView(viewsets.ModelViewSet):
                 friend["status"] = "friends"
             friend_list.append(friend)
         return friend_list
+
+
+class ShowNotifications(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Notification.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user.id)
