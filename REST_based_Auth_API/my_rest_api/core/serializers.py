@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Comment, Notification, Post, Request, Friend
+from .models import Comment, Like, Message, Notification, Post, Request, Friend
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -33,7 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ("id", "comment", "post")
+        fields = ("id", "comment", "user", "post", "comment_text")
 
 
 class RequestSerializer(serializers.ModelSerializer):
@@ -65,3 +65,15 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = "__all__"
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ("id", "is_like", "source_id", "like_type")
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ("id", "sender", "message", "receiver")

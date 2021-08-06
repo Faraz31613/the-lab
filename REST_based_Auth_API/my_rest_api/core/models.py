@@ -14,11 +14,28 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=300)
+    class CommentType:
+        POST = "P"  # comment on post
+        COMMENT = "C"  # comment on comment:reply
+
+        comment_type = (
+            (POST, "Comment"),
+            (COMMENT, "Reply"),
+        )
+
+    user = models.ForeignKey(
+        User, on_delete=CASCADE, related_name="commentor", null=True
+    )
+    post = models.ForeignKey(
+        Post, on_delete=CASCADE, related_name="commented_on_post", null=True
+    )
+    comment = models.ForeignKey(
+        "self", on_delete=models.CASCADE, related_name="parent_comment", null=True
+    )
+    comment_text = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.comment
+        return self.comment_text
 
 
 class Request(models.Model):
@@ -38,29 +55,35 @@ class Request(models.Model):
     )
 
     def __str__(self):
-        request_statement = "{} has sent {} a friend request, Status is {}."
-        return request_statement.format(self.requestor, self.requestee, self.status)
+        request_statement = f"{self.requestor} has sent {self.requestee} a friend request, Status is {self.status}."
+        return request_statement
 
 
 class Friend(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE, related_name="user")
     friend = models.ForeignKey(User, on_delete=CASCADE, related_name="friend")
+    request = models.ForeignKey(
+        Request, on_delete=CASCADE, related_name="friend_request", null=True
+    )
     status = models.CharField(max_length=10, default="Friends")
+
+    def __str__(self):
+        return f"{self.user}'s friend is{self.friend}"
 
 
 class Notification(models.Model):
     class NotificationType:
         REQUEST = "R"
         LIKE = "L"
-        COMMENT = "C"
-        REPLY = "RC"
+        POST = "P"  # comment on post
+        COMMENT = "C"  # comment on comment:reply
         MESSAGE = "M"
 
         notification_type = (
             (REQUEST, "Request"),
             (LIKE, "Like"),
-            (COMMENT, "Comment"),
-            (REPLY, "Reply"),
+            (POST, "Comment"),
+            (COMMENT, "Reply"),
             (MESSAGE, "Message"),
         )
 
@@ -69,11 +92,54 @@ class Notification(models.Model):
     )
     notification = models.CharField(max_length=50)
     is_read = models.BooleanField(default=False)
-    user_by = models.IntegerField(null=True)
-    notification_source_id = models.IntegerField(null=True)  # id of comment,post etc.
+    user_by = models.ForeignKey(User, on_delete=CASCADE, null=True)
+    post = models.ForeignKey(
+        Post, on_delete=CASCADE, related_name="post_notification", null=True
+    )
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name="comment_notification",
+        null=True,
+    )
     notification_source_type = models.CharField(
-        choices=NotificationType.notification_type, max_length=2
+        choices=NotificationType.notification_type, max_length=1
     )
 
     def __str__(self):
         return self.notification
+
+
+class Like(models.Model):
+    class LikeType:
+        POST = "P"  # liked a post
+        COMMENT = "C"  # Liked comment:reply
+
+        like_type = (
+            (POST, "Post"),
+            (COMMENT, "Comment"),
+        )
+
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name="liker", null=True)
+    post = models.ForeignKey(
+        Post, on_delete=CASCADE, related_name="liked_post", null=True
+    )
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, related_name="liked_comment", null=True
+    )
+    is_like = models.BooleanField(default=False)
+
+    def __str__(self):
+        post_or_comment = "Post" if self.like_type == "P" else "Comment"
+        return f"{post_or_comment} is Liked"
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=CASCADE, related_name="message_sender")
+    receiver = models.ForeignKey(
+        User, on_delete=CASCADE, related_name="message_receiver"
+    )
+    message = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.sender.username} | {self.message} | {self.receiver.username}"

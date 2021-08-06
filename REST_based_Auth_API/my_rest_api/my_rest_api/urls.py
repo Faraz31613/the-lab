@@ -33,13 +33,31 @@ urlpatterns = [
         views.CommentView.as_view({"post": "create", "get": "list"}),
         name="comment",
     ),
-    path("get_users/", views.GetUsersView.as_view({"get": "list"}), name="get_users"),
-    path("request/", views.RequestView.as_view(), name="request"),
-    path("change_status/", views.ChangeStatusView.as_view(), name="change_status"),
     path(
-        "show_friends/",
-        views.ShowFriendsView.as_view({"get": "list"}),
-        name="show_friends",
+        "like/",
+        views.LikeView.as_view({"post": "create", "get": "list"}),
+        name="like",
+    ),
+    path("get_users/", views.GetUsersView.as_view({"get": "list"}), name="get_users"),
+    path(
+        "request/",
+        views.RequestView.as_view({"post": "create", "get": "list"}),
+        name="request",
+    ),
+    path(
+        "message/",
+        views.MessageView.as_view({"post": "create", "get": "list"}),
+        name="message",
+    ),
+    path(
+        "change_status/",
+        views.ChangeStatusView.as_view({"put": "update", "delete": "destroy"}),
+        name="change_status",
+    ),
+    path(
+        "friends/",
+        views.FriendsView.as_view({"get": "list", "delete": "destroy"}),
+        name="friends",
     ),
     path(
         "show_notifications/",
