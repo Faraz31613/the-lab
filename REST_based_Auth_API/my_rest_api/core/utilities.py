@@ -7,8 +7,8 @@ def create_notification(
     notification,
     notification_source_type,
     user_by,
-    post,
-    comment,
+    post=None,
+    comment=None,
 ):
     Notification.objects.create(
         user=to_user,

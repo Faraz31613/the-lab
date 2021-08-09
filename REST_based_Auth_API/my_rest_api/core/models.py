@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import related
-from django.http import request
 
 
 class Post(models.Model):
@@ -68,21 +66,19 @@ class Friend(models.Model):
     status = models.CharField(max_length=10, default="Friends")
 
     def __str__(self):
-        return f"{self.user}'s friend is{self.friend}"
+        return f"{self.user}'s friend is {self.friend}"
 
 
 class Notification(models.Model):
     class NotificationType:
         REQUEST = "R"
         LIKE = "L"
-        POST = "P"  # comment on post
-        COMMENT = "C"  # comment on comment:reply
+        COMMENT = "C"
         MESSAGE = "M"
 
         notification_type = (
             (REQUEST, "Request"),
             (LIKE, "Like"),
-            (POST, "Comment"),
             (COMMENT, "Reply"),
             (MESSAGE, "Message"),
         )
