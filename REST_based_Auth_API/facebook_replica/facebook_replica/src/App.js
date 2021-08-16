@@ -1,9 +1,9 @@
-import React from "react"
-import Counter from "./components/counter"
-
+import Login from "modules/logIn"
 function App() {
   return (
-    <Counter />
+    <div>
+      <Login />
+    </div>
   );
 }
 
