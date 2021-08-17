@@ -1,0 +1,44 @@
+.App {
+  text-align: center;
+  width:100%;
+}
+
+h1{
+  font-family:cursive;
+  color: darksalmon;
+  font-size:5vw
+}
+
+.tasks{
+  font-size: 1.5vw;
+  border-radius: 1vw;
+  color:dimgray;
+  padding: 1vw 1.5vw 1vw 1.5vw;
+}
+
+.addTaskBtn{
+  font-size: 1.5vw;
+  border-radius: 1vw;
+  padding: 1vw 1.5vw 1vw 1.5vw;
+}
+
+.taskSheet{
+  margin-top: 8vw;
+  font-size: 1.5vw;
+}
+
+.contentDiv{
+  width: 100%;
+  float:left;
+  padding-left: 10vw;
+}
+.addedTaskBox{
+  margin-top: .3vw;
+  float:left;
+  zoom: 1.5;
+}
+.addedTask{
+  float: left;
+  font-size: 1.5vw;
+  margin-left: 3vw;
+}
