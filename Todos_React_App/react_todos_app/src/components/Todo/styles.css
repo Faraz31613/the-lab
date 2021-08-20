@@ -1,0 +1,23 @@
+.todo-container {
+  margin-top: 40px;
+  width: 25vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.todo-input {
+  width: 20vw;
+}
+
+.todo-editable {
+}
+
+.todo-disabled {
+  all: unset;
+}
+
+.todo-buttons {
+  width: 3vw;
+  display: flex;
+  justify-content: space-around;
+}

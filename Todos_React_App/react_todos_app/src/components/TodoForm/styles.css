@@ -1,0 +1,14 @@
+.form-container {
+  margin-top: 40px;
+  width: 25vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-input {
+  width: 20vw;
+}
+
+.form-button {
+  width: 3vw;
+}

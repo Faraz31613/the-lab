@@ -1,58 +1,41 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
-import TodoForm from "components/TodoForm/TodoForm";
-import Todo from "components/Todo/Todo";
+import TodoForm from "components/TodoForm/TodoForm"
+import Todo from "components/Todo/Todo"
 
-function TodoList() {
-  const [todos, setTodos] = useState([]);
+import "./styles.css"
 
-  const addTodo = (todo) => {
-    if (!todo.text || /^\s*$/.test(todo.text)) {
-      return;
-    }
-    const newTodos = [todo, ...todos];
-    setTodos(newTodos);
-    console.log(newTodos);
-  };
+const TodoList = () => {
+  const [todos, setTodos] = useState([{ id: 100, text: "random" }])
 
-  const updateTodo = (todoId, newValue) => {
-    if (!newValue.text || /^\s*$/.test(newValue.text)) {
-      return;
-    }
-    setTodos((prev) =>
-      prev.map((item) => (item.id === todoId ? newValue : item))
-    );
-  };
+  const addTodo = (todo) => setTodos([...todos, todo])
+
+  const updateTodo = (updatedTodo) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === updateTodo.id ? updatedTodo : todo
+    )
+    setTodos(updatedTodos)
+  }
 
   const removeTodo = (id) => {
-    const removeArr = [...todos].filter((todo) => todo.id !== id);
-
-    setTodos(removeArr);
-  };
-
-  const completeTodo = (id) => {
-    let updatedTodo = todos.map((todo) => {
-      if (todo.id === id) {
-        todo.isComplete = !todo.isComplete;
-      }
-      return todo;
-    });
-    // console.log(updatedTodo)
-    setTodos(updatedTodo)
-  };
+    const updatedTodos = todos.filter((todo) => todo.id !== id)
+    setTodos(updatedTodos)
+  }
 
   return (
-    <div>
+    <div className="container">
       <h1>What's the Plan for Today?</h1>
-      <TodoForm onSubmit={addTodo} />
-      <Todo
-        todos={todos}
-        completeTodo={completeTodo}
-        removeTodo={removeTodo}
-        updateTodo={updateTodo}
-      />
+      <TodoForm addTodo={addTodo} />
+      {todos.map((todo) => (
+        <Todo
+          todo={todo}
+          key={todo.id}
+          removeTodo={removeTodo}
+          updateTodo={updateTodo}
+        />
+      ))}
     </div>
-  );
+  )
 }
 
-export default TodoList;
+export default TodoList
