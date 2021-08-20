@@ -1,6 +1,10 @@
-import 'App.css';
+import { createStore } from 'redux';
 
-import TodoList from "components/TodoList"
+import 'App.css';
+import TodoList from "components/TodoList/TodoList"
+
+// const store = createStore(todosReducer)
+
 
 function App() {
   return (

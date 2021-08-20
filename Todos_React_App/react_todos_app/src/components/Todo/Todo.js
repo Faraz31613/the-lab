@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import TodoForm from "components/TodoForm";
+import TodoForm from "components/TodoForm/TodoForm";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiEdit } from "react-icons/ti";
 function Todo({ todos, completeTodo,removeTodo,updateTodo }) {
@@ -22,7 +22,7 @@ function Todo({ todos, completeTodo,removeTodo,updateTodo }) {
   return todos.map((todo, index) => (
     <div
       className={todo.isComplete ? 'todo-row complete' : "todo-row"}
-      key={index}
+      key={todo.id}
     >
       <div key={todo.id} onClick={() => completeTodo(todo.id)}>
         {todo.text}
