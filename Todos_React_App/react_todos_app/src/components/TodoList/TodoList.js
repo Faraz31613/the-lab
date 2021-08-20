@@ -6,7 +6,7 @@ import Todo from "components/Todo/Todo"
 import "./styles.css"
 
 const TodoList = () => {
-  const [todos, setTodos] = useState([{ id: 100, text: "random" }])
+  const [todos, setTodos] = useState([])
 
   const addTodo = (todo) => setTodos([...todos, todo])
 
