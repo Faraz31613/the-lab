@@ -1,2 +1,0 @@
-const SET_INPUT = "SET_INPUT"
-const GET_INPUT = "GET_INPUT"

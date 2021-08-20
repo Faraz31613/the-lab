@@ -1,44 +1,44 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
-import TodoForm from "components/TodoForm/TodoForm";
-import { RiCloseCircleLine } from "react-icons/ri";
-import { TiEdit } from "react-icons/ti";
-function Todo({ todos, completeTodo,removeTodo,updateTodo }) {
-  const [edit, setEdit] = useState({
-    id: null,
-    value: "",
-  });
-  const submitUpdate = value => {
-      updateTodo(edit.id,value)
-      setEdit({
-          id:null,
-          value:''
-      })
+import { isEmpty, formatWhitespace } from "utils/string"
+
+import "./styles.css"
+
+const Todo = ({ todo, removeTodo, updateTodo }) => {
+  const [editMode, setEditMode] = useState(false)
+  const toggleEditMode = () => setEditMode(!editMode)
+
+  const [updatedText, setUpdatedText] = useState(todo.text)
+
+  const onChange = (event) => {
+    const text = formatWhitespace(event.target.value)
+    setUpdatedText(text)
   }
 
-  if(edit.id){
-      return <TodoForm edit={edit} onSubmit={submitUpdate} />
+  const updateTodoText = () => {
+    if (isEmpty(updatedText)) return toggleEditMode()
+
+    updateTodo({ ...todo, text: updatedText })
+    toggleEditMode()
   }
-  return todos.map((todo, index) => (
-    <div
-      className={todo.isComplete ? 'todo-row complete' : "todo-row"}
-      key={todo.id}
-    >
-      <div key={todo.id} onClick={() => completeTodo(todo.id)}>
-        {todo.text}
-      </div>
-      <div className="icons">
-        <RiCloseCircleLine
-          onClick={() => removeTodo(todo.id)}
-          className="delete-icon"
-        />
-        <TiEdit
-          onClick={() => setEdit({ id: todo.id, value: todo.text })}
-          className="edit-icon"
-        />
+
+  const todoClasses = editMode ? "todo-editable" : "todo-disabled"
+
+  return (
+    <div className="todo-container">
+      <input
+        className={`todo-input ${todoClasses}`}
+        value={updatedText}
+        disabled={!editMode}
+        onBlur={updateTodoText}
+        onChange={onChange}
+      />
+      <div className="todo-buttons">
+        <div onClick={() => removeTodo(todo.id)}>X</div>
+        <div onClick={setEditMode}>✎</div>
       </div>
     </div>
-  ));
+  )
 }
 
-export default Todo;
+export default Todo

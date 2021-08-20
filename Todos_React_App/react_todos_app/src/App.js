@@ -1,17 +1,14 @@
-import { createStore } from 'redux';
-
-import 'App.css';
+import React from "react"
 import TodoList from "components/TodoList/TodoList"
 
-// const store = createStore(todosReducer)
+import "App.css"
 
-
-function App() {
+const App = () => {
   return (
     <div className="todo-app">
       <TodoList />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
