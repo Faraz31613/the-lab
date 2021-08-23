@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
+import {useDispatch} from 'react-redux'
 
 import { isEmpty, formatWhitespace } from "utils/string"
+import { addTodo } from "modules/action"
 
 import "./styles.css"
 
@@ -8,7 +10,7 @@ let latestID = 1
 
 const uniqueID = () => latestID++
 
-const TodoForm = ({ addTodo }) => {
+const TodoForm = () => {
   const [input, setInput] = useState("")
 
   const inputRef = useRef(null)
@@ -16,12 +18,16 @@ const TodoForm = ({ addTodo }) => {
   useEffect(() => {
     inputRef.current.focus()
   })
+  const dispatch = useDispatch()
 
   const onAddTodo = () => {
     const text = formatWhitespace(input)
     if (isEmpty(text)) return
-
-    addTodo({ id: uniqueID(), text })
+    const todo = { id: uniqueID(), text }
+    
+    dispatch(addTodo(todo))
+    
+    // addTodo(todo)
     setInput("")
   }
 

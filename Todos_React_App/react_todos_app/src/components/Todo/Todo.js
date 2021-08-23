@@ -1,10 +1,12 @@
 import React, { useState } from "react"
+import { useDispatch } from "react-redux"
 
 import { isEmpty, formatWhitespace } from "utils/string"
+import * as actions from "modules/action"
 
 import "./styles.css"
 
-const Todo = ({ todo, removeTodo, updateTodo }) => {
+const Todo = ({ todo, removeTodo}) => {
   const [editMode, setEditMode] = useState(false)
   const toggleEditMode = () => setEditMode(!editMode)
 
@@ -15,13 +17,15 @@ const Todo = ({ todo, removeTodo, updateTodo }) => {
     setUpdatedText(text)
   }
 
+  const dispatch = useDispatch()
   const updateTodoText = () => {
     if (isEmpty(updatedText)) return toggleEditMode()
-
-    updateTodo({ ...todo, text: updatedText })
+    const updatedTodo = { ...todo, text: updatedText }
+    dispatch(actions.updateTodo(updatedTodo))
+    // updateTodo({ ...todo, text: updatedText })
     toggleEditMode()
   }
-
+  
   const todoClasses = editMode ? "todo-editable" : "todo-disabled"
 
   return (
@@ -34,7 +38,7 @@ const Todo = ({ todo, removeTodo, updateTodo }) => {
         onChange={onChange}
       />
       <div className="todo-buttons">
-        <div onClick={() => removeTodo(todo.id)}>X</div>
+        <div onClick={() => dispatch(actions.deleteTodo(todo))}>X</div>
         <div onClick={setEditMode}>✎</div>
       </div>
     </div>
