@@ -22,6 +22,7 @@ from todo_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('todo/',views.Todo.as_view({"post":"create","get":"list"}),name = 'todo'),
 
     path('api/token/', views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

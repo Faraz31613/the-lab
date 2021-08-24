@@ -6,11 +6,11 @@ import * as actions from "modules/action"
 
 import "./styles.css"
 
-const Todo = ({ todo, removeTodo}) => {
+const Todo = ({todo}) => {
   const [editMode, setEditMode] = useState(false)
   const toggleEditMode = () => setEditMode(!editMode)
 
-  const [updatedText, setUpdatedText] = useState(todo.text)
+  const [updatedText, setUpdatedText] = useState(todo.todo_text)
 
   const onChange = (event) => {
     const text = formatWhitespace(event.target.value)
@@ -20,9 +20,8 @@ const Todo = ({ todo, removeTodo}) => {
   const dispatch = useDispatch()
   const updateTodoText = () => {
     if (isEmpty(updatedText)) return toggleEditMode()
-    const updatedTodo = { ...todo, text: updatedText }
+    const updatedTodo = { ...todo, todo_text: updatedText }
     dispatch(actions.updateTodo(updatedTodo))
-    // updateTodo({ ...todo, text: updatedText })
     toggleEditMode()
   }
   

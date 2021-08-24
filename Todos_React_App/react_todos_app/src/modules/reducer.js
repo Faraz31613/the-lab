@@ -15,6 +15,8 @@ const reducer = (state = initialState, action) => {
         (todo) => todo.id !== action.payload.id
       )
       return { ...state, todos: updatedTodo }
+    case actionTypes.GET_TODOS_TO_STATE:
+      return { todos: action.payload }
     default:
       return state
   }
