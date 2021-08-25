@@ -1,0 +1,19 @@
+.signIn-form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 3% 35% 3% 35%;
+}
+input {
+  padding: 0.35vw;
+  border-radius: 0.4vw;
+  margin: 0.4vw;
+}
+button {
+  width: 5.2vw;
+  height: 2.8vw;
+  border-radius: 0.4vw;
+  padding: 0.35vw;
+  margin: 1.2vw 0.4vw 0.4vw 0.4vw;
+  place-self: center;
+  background-color: white;
+}
