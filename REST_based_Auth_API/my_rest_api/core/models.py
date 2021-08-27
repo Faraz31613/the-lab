@@ -42,9 +42,11 @@ class Request(models.Model):
         ACCEPTED = "A"
         REJECTED = "R"
 
-        Choices = ((PENDING, "Pending"), (ACCEPTED, "Accepted"), (REJECTED, "Rejected"))
+        Choices = ((PENDING, "Pending"), (ACCEPTED, "Accepted"),
+                   (REJECTED, "Rejected"))
 
-    requestor = models.ForeignKey(User, on_delete=CASCADE, related_name="send_requests")
+    requestor = models.ForeignKey(
+        User, on_delete=CASCADE, related_name="send_requests")
     requestee = models.ForeignKey(
         User, on_delete=CASCADE, related_name="received_requests"
     )
@@ -116,7 +118,8 @@ class Like(models.Model):
             (COMMENT, "Comment"),
         )
 
-    user = models.ForeignKey(User, on_delete=CASCADE, related_name="liker", null=True)
+    user = models.ForeignKey(User, on_delete=CASCADE,
+                             related_name="liker", null=True)
     post = models.ForeignKey(
         Post, on_delete=CASCADE, related_name="liked_post", null=True
     )
@@ -131,7 +134,8 @@ class Like(models.Model):
 
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=CASCADE, related_name="message_sender")
+    sender = models.ForeignKey(
+        User, on_delete=CASCADE, related_name="message_sender")
     receiver = models.ForeignKey(
         User, on_delete=CASCADE, related_name="message_receiver"
     )

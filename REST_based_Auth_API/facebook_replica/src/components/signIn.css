@@ -9,11 +9,17 @@ input {
   margin: 0.4vw;
 }
 button {
-  width: 5.2vw;
-  height: 2.8vw;
+  width: 5vw;
+  height: 2.4vw;
   border-radius: 0.4vw;
+  font-size: 1vw;
   padding: 0.35vw;
   margin: 1.2vw 0.4vw 0.4vw 0.4vw;
   place-self: center;
   background-color: white;
+}
+p {
+  font-size: 1.2vw;
+  color: red;
+  margin-top: 0%;
 }

@@ -1,10 +1,10 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
-export const Home = () => {
-  const isAutheticated = false;
-  if (!isAutheticated) {
-    return <Redirect to="/signIn" />;
-  }
+
+const Home = () => {
+  const isSignedIn = useSelector((state) => state.signIn);
+
   return <h3>Home</h3>;
 };
 

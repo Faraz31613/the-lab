@@ -38,7 +38,8 @@ urlpatterns = [
         views.LikeView.as_view({"post": "create", "get": "list"}),
         name="like",
     ),
-    path("get_users/", views.GetUsersView.as_view({"get": "list"}), name="get_users"),
+    path("get_users/",
+         views.GetUsersView.as_view({"get": "list"}), name="get_users"),
     path(
         "request/",
         views.RequestView.as_view({"post": "create", "get": "list"}),

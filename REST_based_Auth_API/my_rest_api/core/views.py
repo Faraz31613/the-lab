@@ -40,6 +40,7 @@ class RegisterUserView(generics.GenericAPIView):
     queryset = User.objects.all()
 
     def post(self, request, *args, **kwargs):
+        print(self.request.data)
         serializer = self.serializer_class(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -294,7 +295,8 @@ class FriendsView(viewsets.ModelViewSet):
         try:
             friend = Friend.objects.get(user=signed_in_user, friend=friend_id)
         except Friend.DoesNotExist:
-            friend = get_object_or_404(Friend, user=friend_id, friend=signed_in_user)
+            friend = get_object_or_404(
+                Friend, user=friend_id, friend=signed_in_user)
 
         # request object from friend object
         request = friend.request

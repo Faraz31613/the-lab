@@ -1,54 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
+
+import { signUp } from "modules/authentication/action";
+import { notify } from "./notification";
+import * as actions from "modules/authentication/action";
 
 import "./signUp.css";
 
 const SignUp = () => {
-  const [username, setUsername] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmedPassword, setConfirmedPassword] = useState();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("");
 
-  const onFillCredetials = (event) => {
-    const { name, value } = event.target;
-    switch (name) {
-      case "username":
-        setUsername(value);
-      case "email":
-        setEmail(value);
-      case "password":
-        setPassword(value);
-      case "confirmPassword":
-        setConfirmedPassword(value);
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleSignUp = (event) => {
+    event.preventDefault();
+    if (password !== confirmedPassword) {
+      setConfirmPasswordError("password does not match");
+      return;
     }
-  };
 
+    dispatch(signUp({ username, email, password }));
+  };
+  const isSignedUp = useSelector((state) => state.message);
+  useEffect(() => {
+    if (password.length >= 8 || password.length === 0) {
+      setPasswordError("");
+    } else {
+      setPasswordError("password is too short! use minimum 8 characters");
+    }
+
+    if (password === confirmedPassword) {
+      setConfirmPasswordError("");
+    }
+    if (username.length >= 5 || username.length === 0) {
+      setUsernameError("");
+    } else {
+      setUsernameError("Username is too short! use minimum 5 characters");
+    }
+    if (isSignedUp.SuccessOrErrorCode === 200) {
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmedPassword("");
+      dispatch(actions.emptySuccessOrError());
+      notify("Congratulations!", "Successfully registered", "success");
+    }
+    if (isSignedUp.SuccessOrErrorCode === 400) {
+      const errors = Object.keys(isSignedUp.SuccessOrErrorText);
+      if (errors.includes("username")) {
+        setUsernameError("username already exists");
+      }
+      if (errors.includes("email")) {
+        setEmailError("email already exists");
+      }
+    }
+  }, [isSignedUp, username, password, confirmedPassword]);
+  if (isSignedUp.SuccessOrErrorCode === 200) {
+    return <Redirect to="/signIn" />;
+  }
   return (
-    <div className="signUp-form-container">
+    <form className="signUp-form-container" onSubmit={handleSignUp}>
       <input
         name="username"
-        // onChange={onFillCredetials}
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
         placeholder="username"
+        required
       ></input>
+      {usernameError && <p>{usernameError}</p>}
       <input
         name="email"
+        value={email}
         type="email"
-        // onChange={onFillCredetials}
+        onChange={(e) => setEmail(e.target.value)}
         placeholder="email"
+        required
       ></input>
+      {emailError && <p>{emailError}</p>}
       <input
         name="password"
+        value={password}
         type="password"
-        // onChange={onFillCredetials}
+        onChange={(e) => setPassword(e.target.value)}
         placeholder="password"
+        required
       ></input>
+      {passwordError && <p>{passwordError}</p>}
       <input
         name="confirmPassword"
+        value={confirmedPassword}
         type="password"
-        // onChange={onFillCredetials}
+        onChange={(e) => setConfirmedPassword(e.target.value)}
         placeholder="confirm password"
+        required
       ></input>
+      {confirmPasswordError && <p>{confirmPasswordError}</p>}
       <button className="form-button">Sign Up</button>
-    </div>
+      <br />
+      <br />
+      <p>
+        Already Registered?
+        <Link to="/signIn">Login here</Link>
+      </p>
+    </form>
   );
 };
 
