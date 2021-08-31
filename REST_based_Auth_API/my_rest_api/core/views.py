@@ -339,6 +339,18 @@ class ShowNotifications(viewsets.ModelViewSet):
         signed_in_user = self.request.user.id
         return self.queryset.filter(user=signed_in_user)
 
+    def update(self, request, *args, **kwargs):
+        signed_in_user_id = self.request.user.id
+        signed_in_user = self.request.user
+
+        notification_id = request.data["id"]
+
+        self.queryset.filter(pk=notification_id).update(is_read=True)
+
+        data = self.serializer_class(
+            Notification.objects.get(pk=notification_id))
+        return Response(data.data, status=status.HTTP_200_OK)
+
 
 # API for like functionality on facebook replica
 class LikeView(viewsets.ModelViewSet):

@@ -11,6 +11,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # The default result (access/refresh tokens)
         data = super(MyTokenObtainPairSerializer, self).validate(attrs)
         # Custom data you want to include
+        data.update({"fName": self.user.first_name})
+        data.update({"lName": self.user.last_name})
         data.update({"user": self.user.username})
         data.update({"id": self.user.id})
         # and everything else you want to send in the response
@@ -23,17 +25,18 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     username = serializers.CharField(
-             validators=[UniqueValidator(queryset=User.objects.all())]
-             )
-    
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+
     def create(self, validated_data):
-         user = User.objects.create_user(validated_data['username'], validated_data['email'],
-              validated_data['password'])
-         return user
+        user = User.objects.create_user(validated_data['username'], validated_data['email'],
+                                        validated_data['password'], first_name=validated_data['first_name'], last_name=validated_data['last_name'])
+        return user
 
     class Meta:
         model = User
-        fields = ("id", "username", "email","password")
+        fields = ("id", "username", "email",
+                  "password", "first_name", "last_name")
 
 
 class PostSerializer(serializers.ModelSerializer):

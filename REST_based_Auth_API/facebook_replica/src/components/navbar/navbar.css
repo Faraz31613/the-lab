@@ -1,0 +1,54 @@
+.navbar-items {
+  background: #457fca;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.2vh;
+}
+.navbar-logo {
+  color: aliceblue;
+  justify-self: start;
+  margin-left: 25px;
+  cursor: pointer;
+}
+
+.nav-menu {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  text-align: center;
+  list-style: none;
+  grid-gap: 10px;
+  width: 65vw;
+  justify-content: end;
+  margin-right: 25px;
+}
+
+.nav-links {
+  color: aliceblue;
+  text-decoration: none;
+  padding: 0.25vw 0.8vw;
+}
+
+.nav-links:hover {
+  background-color: #233a85;
+  border-radius: 5px;
+}
+
+.fa-bars {
+  color: aliceblue;
+}
+
+.nav-btn-links {
+  color: aliceblue;
+  text-decoration: none;
+  padding: 0.25vw 0.8vw;
+}
+.nav-btn-links:hover {
+  background-color: #233a85;
+  border-radius: 5px;
+}
+
+.menu-icon {
+  display: none;
+}

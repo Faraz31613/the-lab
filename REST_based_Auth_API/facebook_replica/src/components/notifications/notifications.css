@@ -1,0 +1,48 @@
+.notifications-list {
+  list-style: none;
+}
+
+.notification {
+  font-size: medium;
+  margin-top: 4vh;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.unread-notification {
+  color: rgb(3, 50, 139);
+}
+
+.read-notification {
+  color: rgb(61, 101, 177);
+}
+
+.notification-seperator {
+  width: 94%;
+  text-align: left;
+  margin-left: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.mark-read {
+  float: right;
+  margin-right: 6%;
+  margin-top: 0.55%;
+  color: bisque;
+  text-decoration: none;
+}
+
+.mark-read:hover {
+  background-color: #233a85;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.marked-already {
+  float: right;
+  margin-right: 6%;
+  margin-top: 0.55%;
+  color: rgb(194, 178, 166);
+  text-decoration: line-through;
+}

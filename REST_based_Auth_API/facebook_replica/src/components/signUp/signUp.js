@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 
 import { signUp } from "modules/authentication/action";
-import { notify } from "./notification";
+import { notify } from "../notification";
 import * as actions from "modules/authentication/action";
 
 import "./signUp.css";
@@ -30,7 +30,7 @@ const SignUp = () => {
 
     dispatch(signUp({ username, email, password }));
   };
-  const isSignedUp = useSelector((state) => state.message);
+  const isSignedUp = useSelector((state) => state.authReducer.message);
   useEffect(() => {
     if (password.length >= 8 || password.length === 0) {
       setPasswordError("");
@@ -68,50 +68,52 @@ const SignUp = () => {
     return <Redirect to="/signIn" />;
   }
   return (
-    <form className="signUp-form-container" onSubmit={handleSignUp}>
-      <input
-        name="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="username"
-        required
-      ></input>
-      {usernameError && <p>{usernameError}</p>}
-      <input
-        name="email"
-        value={email}
-        type="email"
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="email"
-        required
-      ></input>
-      {emailError && <p>{emailError}</p>}
-      <input
-        name="password"
-        value={password}
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="password"
-        required
-      ></input>
-      {passwordError && <p>{passwordError}</p>}
-      <input
-        name="confirmPassword"
-        value={confirmedPassword}
-        type="password"
-        onChange={(e) => setConfirmedPassword(e.target.value)}
-        placeholder="confirm password"
-        required
-      ></input>
-      {confirmPasswordError && <p>{confirmPasswordError}</p>}
-      <button className="form-button">Sign Up</button>
-      <br />
-      <br />
-      <p>
-        Already Registered?
-        <Link to="/signIn">Login here</Link>
-      </p>
-    </form>
+    <div className="signUp-container">
+      <form className="signUp-form-container" onSubmit={handleSignUp}>
+        <input
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="username"
+          required
+        ></input>
+        {usernameError && <p>{usernameError}</p>}
+        <input
+          name="email"
+          value={email}
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email"
+          required
+        ></input>
+        {emailError && <p>{emailError}</p>}
+        <input
+          name="password"
+          value={password}
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="password"
+          required
+        ></input>
+        {passwordError && <p>{passwordError}</p>}
+        <input
+          name="confirmPassword"
+          value={confirmedPassword}
+          type="password"
+          onChange={(e) => setConfirmedPassword(e.target.value)}
+          placeholder="confirm password"
+          required
+        ></input>
+        {confirmPasswordError && <p>{confirmPasswordError}</p>}
+        <button className="form-button">Sign Up</button>
+        <br />
+        <br />
+        <p>
+          Already Registered?
+          <Link to="/signIn">Login here</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

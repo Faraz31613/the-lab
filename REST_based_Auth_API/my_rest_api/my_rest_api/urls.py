@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     path(
         "show_notifications/",
-        views.ShowNotifications.as_view({"get": "list"}),
+        views.ShowNotifications.as_view({"get": "list", "put": "update"}),
         name="show_notifications",
     ),
     path(

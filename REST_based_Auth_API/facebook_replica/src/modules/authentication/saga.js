@@ -1,4 +1,4 @@
-import { call, put, all, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 
 import * as actionTypes from "./type";
 import * as actions from "./action";
@@ -14,7 +14,7 @@ function* registerUser(action) {
   );
 }
 
-function* registerUserSaga() {
+export function* registerUserSaga() {
   yield takeEvery(actionTypes.SIGN_UP, registerUser);
 }
 
@@ -43,10 +43,6 @@ function* signIn(action) {
   }
 }
 
-function* signInSaga() {
+export function* signInSaga() {
   yield takeEvery(actionTypes.SIGN_IN, signIn);
-}
-
-export default function* rootSaga() {
-  yield all([registerUserSaga(), signInSaga()]);
 }

@@ -3,7 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as actions from "modules/authentication/action";
-import { notify } from "./notification";
+import { notify } from "../notification";
 import "./signIn.css";
 
 const SignIn = () => {
@@ -18,7 +18,7 @@ const SignIn = () => {
     dispatch(actions.signIn({ username, password }));
   };
 
-  const isSignedIn = useSelector((state) => state.message);
+  const isSignedIn = useSelector((state) => state.authReducer.message);
   useEffect(() => {
     if (isSignedIn.SuccessOrErrorCode === 200) {
       notify("Congratulations!", "Successfully Signed In", "success");
@@ -38,31 +38,33 @@ const SignIn = () => {
     return <Redirect to="/" />;
   }
   return (
-    <form className="signIn-form-container" onSubmit={handleSubmit}>
-      <input
-        name="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="username"
-        required
-      ></input>
-      {usernameError && <p>{usernameError}</p>}
-      <input
-        name="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="password"
-        required
-      ></input>
-      <button className="form-button">Login</button>
-      <br />
-      <br />
-      <p>
-        Not a User?
-        <Link to="/signUp">Register Here</Link>
-      </p>
-    </form>
+    <div className="signIn-container">
+      <form className="signIn-form-container" onSubmit={handleSubmit}>
+        <input
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="username"
+          required
+        ></input>
+        {usernameError && <p>{usernameError}</p>}
+        <input
+          name="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="password"
+          required
+        ></input>
+        <button className="form-button">Login</button>
+        <br />
+        <br />
+        <p>
+          Not a User?
+          <Link to="/signUp">Register Here</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

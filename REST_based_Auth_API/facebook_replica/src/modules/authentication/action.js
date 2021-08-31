@@ -28,3 +28,6 @@ export const successfullSignIn = (data) => ({
   type: actionTypes.SUCCESSFULL_SIGN_IN,
   payload: data,
 });
+export const logout = () => ({
+  type: actionTypes.LOGOUT,
+});

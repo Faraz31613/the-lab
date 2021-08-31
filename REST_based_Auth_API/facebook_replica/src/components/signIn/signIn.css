@@ -1,4 +1,7 @@
-.signUp-form-container {
+.signIn-container {
+  text-align: center;
+}
+.signIn-form-container {
   display: flex;
   flex-direction: column;
   padding: 3% 35% 3% 35%;
@@ -6,7 +9,7 @@
 input {
   padding: 0.35vw;
   border-radius: 0.4vw;
-  margin: 0.4%;
+  margin: 0.4vw;
 }
 button {
   width: 5vw;
@@ -14,7 +17,7 @@ button {
   border-radius: 0.4vw;
   font-size: 1vw;
   padding: 0.35vw;
-  margin: 11.2vw 0.4vw 0.4vw 0.4vw;
+  margin: 1.2vw 0.4vw 0.4vw 0.4vw;
   place-self: center;
   background-color: white;
 }

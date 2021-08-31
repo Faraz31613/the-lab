@@ -9,7 +9,7 @@ const notification = {
   animationIn: ["animate__animated", "animate__fadeIn"],
   animationOut: ["animate__animated", "animate__fadeOut"],
   dismiss: {
-    duration: 2500,
+    duration: 1500,
     onScreen: true,
     pauseOnHover: true,
   },
