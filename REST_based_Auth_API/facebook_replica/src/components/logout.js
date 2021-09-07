@@ -9,6 +9,7 @@ const Logout = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(actions.logout());
+    localStorage.clear()
     notify("Congratulations!", "Successfully Logged out", "success");
   });
 

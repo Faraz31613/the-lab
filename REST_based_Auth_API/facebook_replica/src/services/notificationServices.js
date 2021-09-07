@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import http from "httpCommon";
 
 export async function getNotification(authToken) {

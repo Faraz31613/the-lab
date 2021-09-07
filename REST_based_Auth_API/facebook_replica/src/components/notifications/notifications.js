@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import * as actions from "modules/notification/action";
 
@@ -9,16 +10,21 @@ const Notifications = () => {
   const [readFlag, setReadFlag] = useState(false);
 
   const dispatch = useDispatch();
-  const signedInUser = useSelector((state) => state.authReducer.signIn["user"]);
-  const authToken = signedInUser["access"];
+  const user = useSelector((state) => state.authReducer.signIn);
+  const authToken = user.user.access;
+  const isSignedIn = user.isSignedIn;
 
-  useEffect(
-    () => {
-      dispatch(actions.getNotification(authToken));
-    },
-    [authToken],
-    readFlag
-  );
+  useEffect(() => {
+    console.log("in notifications");
+    if (!isSignedIn) {
+      return <Redirect to="/signIn" />;
+    }
+    if (isSignedIn) {
+      localStorage.setItem("refreshPath", "/notifications");
+    }
+
+    dispatch(actions.getNotification(authToken));
+  }, [authToken, readFlag]);
 
   const handleMarkRead = (event) => {
     dispatch(
@@ -33,7 +39,9 @@ const Notifications = () => {
   const notifications = useSelector(
     (state) => state.notificationReducer.notifications
   );
-
+  if (!isSignedIn) {
+    return <Redirect to="/signIn" />;
+  }
   return (
     <div className="notifications-container">
       <ul className="notifications-list">

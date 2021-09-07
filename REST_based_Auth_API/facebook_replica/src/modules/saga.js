@@ -5,6 +5,8 @@ import {
   getNotificationsSaga,
   markAsReadSaga,
 } from "modules/notification/saga";
+import { getPostsSaga } from "modules/post/saga";
+import { likeSaga, getLikesSaga } from "modules/like/saga";
 
 export default function* rootSaga() {
   yield all([
@@ -12,5 +14,8 @@ export default function* rootSaga() {
     signInSaga(),
     getNotificationsSaga(),
     markAsReadSaga(),
+    getPostsSaga(),
+    likeSaga(),
+    getLikesSaga(),
   ]);
 }

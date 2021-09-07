@@ -1,10 +1,15 @@
+from django.db.models.query import QuerySet
+from django.http.request import QueryDict
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView  # , TokenVerifyView
 from rest_framework import generics, status, viewsets
+# from rest_framework.exceptions import ValidationError
+# from rest_framework_simplejwt.backends import TokenBackend
+from itertools import chain
 
 from .models import Comment, Friend, Like, Message, Notification, Post, Request
 from .serializers import (
@@ -14,15 +19,36 @@ from .serializers import (
     NotificationSerializer,
     UserSerializer,
     PostSerializer,
+    HomeSerializer,
     RequestSerializer,
     MessageSerializer,
     ChangeRequestStatusSerializer,
     MyTokenObtainPairSerializer,
+    # MyTokenVerifySerializer,
 )
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+# class MyTokenVerifyView(TokenVerifyView):
+#     serializer_class = MyTokenVerifySerializer
+
+#     def post(self, request, *args, **kwargs):
+#         print(request.data["token"])
+#         token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+#         data = {'token': token}
+#         print(data)
+#         try:
+#             valid_data = TokenBackend(
+#                 algorithm='HS256').decode(token, verify=False)
+#             print(valid_data)
+#             # user = valid_data['user']
+#             # request.user = user
+#             return Response({"user_id": valid_data['user_id']})
+#         except ValidationError as v:
+#             print("validation error", v)
 
 
 class HelloView(APIView):
@@ -61,8 +87,32 @@ class PostView(viewsets.ModelViewSet):
     queryset = Post.objects.all()
 
     def get_queryset(self):
-        user = self.request.user
-        return self.queryset.filter(user=user)
+        signed_in_user = self.request.user
+        return self.queryset.filter(user=signed_in_user)
+
+
+class HomeView(viewsets.ModelViewSet):
+    serializer_class = HomeSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+
+    def get_queryset(self):
+        signed_in_user = self.request.user
+        friends = Friend.objects.filter(user=signed_in_user) | Friend.objects.filter(
+            friend=signed_in_user
+        )
+
+        home_posts = self.queryset.filter(user=signed_in_user)
+
+        for friend in friends:
+            if friend.user.id is not signed_in_user.id:
+                home_posts = QuerySet.union(
+                    home_posts, self.queryset.filter(user=friend.user))
+            else:
+                home_posts = QuerySet.union(
+                    home_posts, self.queryset.filter(user=friend.friend))
+
+        return home_posts.order_by("-id")
 
 
 # API for commenting on a post or replying to a comment
@@ -157,7 +207,7 @@ class RequestView(viewsets.ModelViewSet):
         # it will also handle a case if the requestor and requestee already are friends, then their request will exists
         if Request.objects.filter(
             requestor_id=signed_in_user_id
-        ) | Request.objects.filter(requestee_id=requestee_id):
+        ) & Request.objects.filter(requestee_id=requestee_id):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.serializer_class(data=self.request.data)
@@ -360,10 +410,11 @@ class LikeView(viewsets.ModelViewSet):
 
     # method to get the list of likes to a post or comment that someone has liked
     def get_queryset(self):
-
         # passed data
-        post_id = self.request.data["post"]
-        comment_id = self.request.data["comment"]
+        post_id = self.request.GET.get("post")#self.request.data["post"]
+        comment_id = None
+        if("comment" in self.request.data):
+            comment_id = self.request.GET.get("comment")
 
         # checking comment_id because it can be null
         query = dict(comment=comment_id) if comment_id else dict(post=post_id)
@@ -377,12 +428,22 @@ class LikeView(viewsets.ModelViewSet):
         post_id = self.request.data["post"]
         comment_id = self.request.data["comment"]
 
+        # like exits or not
+        likeExits = self.queryset.filter(
+            comment=comment_id, post=post_id, user=signed_in_user.id)
+
+        print(likeExits)
+        if likeExits.exists():
+
+            return Response()
+
         # parent post that is liked
         parent_post = get_object_or_404(Post, pk=post_id)
 
         # post_author(user who made the post) from post object,
         post_or_comment_author = parent_post.user
 
+        comment = None
         # if comment_id is not null, it means a comment is liked
         if comment_id:
             # comment which is liked
@@ -397,8 +458,8 @@ class LikeView(viewsets.ModelViewSet):
             notification_text = f"{signed_in_user.username} has liked your post"
 
         serializer = self.serializer_class(data=self.request.data)
-        serializer.is_valid(raise_exception=True)
 
+        serializer.is_valid(raise_exception=True)
         # send notification to the post/comment author whose post/comment is liked
         # if signed in user likes his own comment or post
         # notification not needed then

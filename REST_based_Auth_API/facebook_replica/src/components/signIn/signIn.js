@@ -19,8 +19,14 @@ const SignIn = () => {
   };
 
   const isSignedIn = useSelector((state) => state.authReducer.message);
+
   useEffect(() => {
-    if (isSignedIn.SuccessOrErrorCode === 200) {
+    const alreadySignedIn = JSON.parse(decodeURI(localStorage.getItem("user")));
+    if (alreadySignedIn !== null) {
+      dispatch(actions.alreadySignedIn(alreadySignedIn));
+    }
+
+    if (alreadySignedIn === null && isSignedIn.SuccessOrErrorCode === 200) {
       notify("Congratulations!", "Successfully Signed In", "success");
       return <Redirect to="/" />;
     }
@@ -35,8 +41,9 @@ const SignIn = () => {
     }
   }, [isSignedIn]);
   if (isSignedIn.SuccessOrErrorCode === 200) {
-    return <Redirect to="/" />;
+    return <Redirect to={localStorage.getItem("refreshPath")} />;
   }
+
   return (
     <div className="signIn-container">
       <form className="signIn-form-container" onSubmit={handleSubmit}>

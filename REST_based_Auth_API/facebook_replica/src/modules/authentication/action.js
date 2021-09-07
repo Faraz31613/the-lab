@@ -31,3 +31,7 @@ export const successfullSignIn = (data) => ({
 export const logout = () => ({
   type: actionTypes.LOGOUT,
 });
+export const alreadySignedIn = (signedInUserData) => ({
+  type: actionTypes.ALREADY_SIGNED_IN,
+  payload: signedInUserData,
+});

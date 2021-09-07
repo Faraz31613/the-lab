@@ -129,8 +129,9 @@ class Like(models.Model):
     is_like = models.BooleanField(default=False)
 
     def __str__(self):
-        post_or_comment = "Post" if self.like_type == "P" else "Comment"
-        return f"{post_or_comment} is Liked"
+        post_or_comment = "Post" if self.comment==None else "Comment"
+        likes_or_unliked = "Liked" if self.is_like== True else "Unliked"
+        return f"{post_or_comment} is {likes_or_unliked}"
 
 
 class Message(models.Model):

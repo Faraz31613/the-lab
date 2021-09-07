@@ -29,6 +29,9 @@ urlpatterns = [
         "post/", views.PostView.as_view({"post": "create", "get": "list"}), name="post"
     ),
     path(
+        "home/", views.HomeView.as_view({"get": "list"}), name="home"
+    ),
+    path(
         "comment/",
         views.CommentView.as_view({"post": "create", "get": "list"}),
         name="comment",
@@ -65,10 +68,14 @@ urlpatterns = [
         views.ShowNotifications.as_view({"get": "list", "put": "update"}),
         name="show_notifications",
     ),
+    
     path(
         "api/token/", views.MyTokenObtainPairView.as_view(), name="my_token_obtain_pair"
     ),
     path(
         "api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"
     ),
+    # path(
+    #     "api/token/verify/", views.MyTokenVerifyView.as_view(), name="token_verify"
+    # ),
 ]

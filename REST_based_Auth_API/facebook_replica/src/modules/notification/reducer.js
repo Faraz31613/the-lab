@@ -1,5 +1,5 @@
 import { initialState } from "./init";
-import * as actionTypes from "modules/notification/type";
+import * as actionTypes from "./type";
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
