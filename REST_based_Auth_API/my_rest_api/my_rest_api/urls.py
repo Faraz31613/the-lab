@@ -38,8 +38,13 @@ urlpatterns = [
     ),
     path(
         "like/",
-        views.LikeView.as_view({"post": "create", "get": "list"}),
+        views.LikeView.as_view({"post": "create", "get": "list", "delete": "destroy"}),
         name="like",
+    ),
+    path(
+        "signedInUserLikesView/",
+        views.SignedInUserLikesView.as_view({"get": "list"}),
+        name="signedInUserLikesView",
     ),
     path("get_users/",
          views.GetUsersView.as_view({"get": "list"}), name="get_users"),

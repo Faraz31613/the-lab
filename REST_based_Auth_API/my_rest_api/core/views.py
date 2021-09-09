@@ -123,8 +123,12 @@ class CommentView(viewsets.ModelViewSet):
 
     # returning the comments
     def get_queryset(self):
-        post_id = self.request.data["post"]
-        comment_id = self.request.data["comment"]
+        # post_id = self.request.data["post"]
+        # comment_id = self.request.data["comment"]
+        post_id = self.request.GET.get("post")  # self.request.data["post"]
+        comment_id = None
+        if(self.request.GET.get("comment") != "null"):
+            comment_id = self.request.GET.get("comment")
 
         # query with refernce to a specific comment or post
         query = dict(comment=comment_id) if comment_id else dict(post=post_id)
@@ -161,14 +165,15 @@ class CommentView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         # send notification to the author of the post that someone has commented on yout post
-        Notification.objects.create(
-            user=post_or_comment_author,
-            notification=notification_text,
-            user_by=signed_in_user,
-            post=Post(post_id),
-            comment=Comment(comment_id) if comment_id else None,
-            notification_source_type=Notification.NotificationType.COMMENT,
-        )
+        if post_or_comment_author != signed_in_user:
+            Notification.objects.create(
+                user=post_or_comment_author,
+                notification=notification_text,
+                user_by=signed_in_user,
+                post=Post(post_id),
+                comment=Comment(comment_id) if comment_id else None,
+                notification_source_type=Notification.NotificationType.COMMENT,
+            )
         comment = serializer.save()
         return Response(self.serializer_class(comment).data)
 
@@ -402,6 +407,18 @@ class ShowNotifications(viewsets.ModelViewSet):
         return Response(data.data, status=status.HTTP_200_OK)
 
 
+class SignedInUserLikesView(viewsets.ModelViewSet):
+    serializer_class = LikeSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Like.objects.all()
+
+    # method to get the list of likes to a post or comment that someone has liked
+    def get_queryset(self):
+        # passed data
+        signedInUser = self.request.user
+        return self.queryset.filter(user=signedInUser, is_like=True)
+
+
 # API for like functionality on facebook replica
 class LikeView(viewsets.ModelViewSet):
     serializer_class = LikeSerializer
@@ -411,9 +428,9 @@ class LikeView(viewsets.ModelViewSet):
     # method to get the list of likes to a post or comment that someone has liked
     def get_queryset(self):
         # passed data
-        post_id = self.request.GET.get("post")#self.request.data["post"]
+        post_id = self.request.GET.get("post")  # self.request.data["post"]
         comment_id = None
-        if("comment" in self.request.data):
+        if(self.request.GET.get("comment") != "null"):
             comment_id = self.request.GET.get("comment")
 
         # checking comment_id because it can be null
@@ -422,6 +439,7 @@ class LikeView(viewsets.ModelViewSet):
 
     # method to like a comment or post
     def create(self, request, *args, **kwargs):
+        print("like")
         signed_in_user = self.request.user
 
         # passed data
@@ -432,9 +450,7 @@ class LikeView(viewsets.ModelViewSet):
         likeExits = self.queryset.filter(
             comment=comment_id, post=post_id, user=signed_in_user.id)
 
-        print(likeExits)
         if likeExits.exists():
-
             return Response()
 
         # parent post that is liked
@@ -477,6 +493,27 @@ class LikeView(viewsets.ModelViewSet):
         )
         like = serializer.save()
         return Response(self.serializer_class(like).data)
+
+    def destroy(self, request, *args, **kwargs):
+        print("unlike")
+        signed_in_user = self.request.user.id
+
+        like_id = self.request.GET.get("id")
+
+        like = get_object_or_404(
+            Like, id=like_id)
+
+        post_or_comment_author = like.post.user
+
+        self.queryset.filter(id=like_id).delete()
+
+        Notification.objects.filter(
+            user=post_or_comment_author,
+            user_by=signed_in_user,
+            notification_source_type=Notification.NotificationType.LIKE,
+        ).delete()
+
+        return Response(status=status.HTTP_200_OK)
 
 
 # API for message communication between users

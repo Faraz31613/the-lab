@@ -1,16 +1,16 @@
 import { initialState } from "./init";
 import * as actionTypes from "./type";
 
-const likeReducer = (state = initialState, action) => {
+const commentReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.SHOW_SIGNEDIN_USER_LIKES:
+    case actionTypes.SHOW_COMMENTS:
       return {
         ...state,
-        likes: action.payload,
+        comments: action.payload,
       };
     default:
       return state;
   }
 };
 
-export default likeReducer;
+export default commentReducer;

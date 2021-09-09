@@ -10,17 +10,31 @@ export async function like(createLikeCred) {
   }
 }
 
-export async function getlikes(likedPostOrCommentCred) {
+export async function getSignedInUserLikes(authToken) {
   try {
-    return await http.get("/like/", {
-      params: {
-        post: likedPostOrCommentCred["likedCred"].post,
-        comment: likedPostOrCommentCred["likedCred"].comment,
-      },
+    return await http.get("/signedInUserLikesView/", {
+      // params: {
+      //   post: likedPostOrCommentCred["likedCred"].post,
+      //   comment: likedPostOrCommentCred["likedCred"].comment,
+      // },
       headers: {
-        Authorization: `Bearer ${likedPostOrCommentCred["authToken"]}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
+  } catch (error) {
+    return error.response;
+  }
+}
+
+export async function unlike(deleteLikeCred) {
+  try {
+    return await http.delete(
+      "/like/",
+      {
+        params:{id: deleteLikeCred["likeId"]},
+        headers: { Authorization: `Bearer ${deleteLikeCred["authToken"]}` },
+      }
+    );
   } catch (error) {
     return error.response;
   }

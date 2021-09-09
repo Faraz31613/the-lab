@@ -1,32 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 
 import * as postActions from "modules/post/action";
 import * as likeActions from "modules/like/action";
-import Like from "components/like";
+import * as selector from "components/selector";
+// import * as navigator from "components/authNavigation"
+
+import Post from "./post";
 
 import "./home.css";
 
 const Home = () => {
-  const user = useSelector((state) => state.authReducer.signIn);
-  const authToken = user.user.access;
-  const isSignedIn = user.isSignedIn;
+  const [addCommentFlag, setAddCommentFlag] = useState(false);
+  const [postIdForComment, setPostIdForComment] = useState();
+
+  const signedInCreds = useSelector(selector.signedInCreds);
+  const authToken = signedInCreds.user.access;
+  const isSignedIn = signedInCreds.isSignedIn;
 
   const dispatch = useDispatch();
+
+  const posts = useSelector(selector.posts);
+
   useEffect(() => {
     if (!isSignedIn) {
       return <Redirect to="/signIn" />;
     }
     if (isSignedIn) {
-      localStorage.setItem("user", encodeURI(JSON.stringify(user)));
+      localStorage.setItem("user", encodeURI(JSON.stringify(signedInCreds)));
       localStorage.setItem("refreshPath", "/");
     }
 
     dispatch(postActions.getPosts(authToken));
-  }, authToken);
-
-  const posts = useSelector((state) => state.postReducer.posts);
+    dispatch(likeActions.getSignedInUserLikes(authToken));
+  }, [authToken]);
 
   if (!isSignedIn) {
     return <Redirect to="/signIn" />;
@@ -38,24 +46,16 @@ const Home = () => {
         <i className="fas fa-house-user"></i> Home
       </h3>
       <div className="home-posts">
-        {posts.map((post, index) => {
+        {posts.map((post) => {
           return (
-            <>
-              <section className="post-section" key={index} postId={post.id}>
-                <header className="post-author" userId={post.user.id}>
-                  <i className="fas fa-user"></i> {post.user.first_name}{" "}
-                  {post.user.last_name}
-                </header>
-                <p className="post-text">{post.text_post}</p>
-                <Like postId={post.id} userId={user.user.id}></Like>
-                <button className="post-comment-btn">
-                  <i className="far fa-comment"></i> comment
-                </button>
-                <button className="post-share-btn">
-                  <i className="fas fa-share"></i> share
-                </button>
-              </section>
-            </>
+            <Post
+              addCommentFlag={addCommentFlag}
+              postIdForComment={postIdForComment}
+              setAddCommentFlag={setAddCommentFlag}
+              setPostIdForComment={setPostIdForComment}
+              post={post}
+              key = {post.id}
+            />
           );
         })}
       </div>

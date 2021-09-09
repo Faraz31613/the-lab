@@ -2,23 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+import * as hooks from "./hooks";
 import * as actions from "modules/authentication/action";
 import { notify } from "../notification";
+import * as selector from "components/selector";
+
 import "./signIn.css";
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const [usernameError, setUsernameError] = useState("");
 
-  const dispatch = useDispatch();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    dispatch(actions.signIn({ username, password }));
-  };
+  const isSignedInErrorMessage = useSelector(selector.isSignedInErrorMessage);
 
-  const isSignedIn = useSelector((state) => state.authReducer.message);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const alreadySignedIn = JSON.parse(decodeURI(localStorage.getItem("user")));
@@ -26,12 +24,15 @@ const SignIn = () => {
       dispatch(actions.alreadySignedIn(alreadySignedIn));
     }
 
-    if (alreadySignedIn === null && isSignedIn.SuccessOrErrorCode === 200) {
+    if (
+      alreadySignedIn === null &&
+      isSignedInErrorMessage.SuccessOrErrorCode === 200
+    ) {
       notify("Congratulations!", "Successfully Signed In", "success");
       return <Redirect to="/" />;
     }
-    if (isSignedIn.SuccessOrErrorCode === 401) {
-      const errors = Object.keys(isSignedIn.SuccessOrErrorText);
+    if (isSignedInErrorMessage.SuccessOrErrorCode === 401) {
+      const errors = Object.keys(isSignedInErrorMessage.SuccessOrErrorText);
       if (errors.includes("detail")) {
         setUsernameError("User with these credentials does not exists!");
         setTimeout(() => {
@@ -39,14 +40,19 @@ const SignIn = () => {
         }, 4000);
       }
     }
-  }, [isSignedIn]);
-  if (isSignedIn.SuccessOrErrorCode === 200) {
+  }, [isSignedInErrorMessage]);
+  if (isSignedInErrorMessage.SuccessOrErrorCode === 200) {
     return <Redirect to={localStorage.getItem("refreshPath")} />;
   }
 
   return (
     <div className="signIn-container">
-      <form className="signIn-form-container" onSubmit={handleSubmit}>
+      <form
+        className="signIn-form-container"
+        onSubmit={(e) => {
+          hooks.signIn(e, dispatch, username, password);
+        }}
+      >
         <input
           name="username"
           value={username}

@@ -2,9 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 
+import * as selector from "components/selector";
+
 const Friends = () => {
-  const user = useSelector((state) => state.authReducer.signIn);
-  const isSignedIn = user.isSignedIn;
+  const isSignedIn =useSelector(selector.isSignedIn);
 
   if (isSignedIn) {
     localStorage.setItem("refreshPath", "/friends");

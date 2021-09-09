@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 
-import { signUp } from "modules/authentication/action";
+import * as hooks from "./hooks";
 import { notify } from "../notification";
 import * as actions from "modules/authentication/action";
+import * as selector from "components/selector";
 
 import "./signUp.css";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
@@ -21,16 +24,8 @@ const SignUp = () => {
 
   const dispatch = useDispatch();
 
-  const handleSignUp = (event) => {
-    event.preventDefault();
-    if (password !== confirmedPassword) {
-      setConfirmPasswordError("password does not match");
-      return;
-    }
+  const isSignedUp = useSelector(selector.isSignedUpErrorMessage);
 
-    dispatch(signUp({ username, email, password }));
-  };
-  const isSignedUp = useSelector((state) => state.authReducer.message);
   useEffect(() => {
     if (password.length >= 8 || password.length === 0) {
       setPasswordError("");
@@ -64,17 +59,47 @@ const SignUp = () => {
       }
     }
   }, [isSignedUp, username, password, confirmedPassword]);
+
   if (isSignedUp.SuccessOrErrorCode === 200) {
     return <Redirect to="/signIn" />;
   }
   return (
     <div className="signUp-container">
-      <form className="signUp-form-container" onSubmit={handleSignUp}>
+      <form
+        className="signUp-form-container"
+        onSubmit={(e) => {
+          hooks.signUp(
+            e,
+            dispatch,
+            username,
+            firstName,
+            lastName,
+            email,
+            password,
+            confirmedPassword,
+            setConfirmPasswordError
+          );
+        }}
+      >
         <input
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="username"
+          required
+        ></input>
+        <input
+          name="firstName"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          placeholder="firstName"
+          required
+        ></input>
+        <input
+          name="lastName"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          placeholder="lastName"
           required
         ></input>
         {usernameError && <p>{usernameError}</p>}

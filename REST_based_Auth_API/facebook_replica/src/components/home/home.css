@@ -11,9 +11,11 @@
 
 .post-section {
   text-align: left !important;
-  margin: 2%;
+  margin: 2% 2% 6% 2%;
   background-color: aliceblue;
+  padding: 1.6%;
   opacity: 0.8;
+  border: 1px solid #0862d8;
 }
 
 .post-author {
@@ -47,4 +49,29 @@
 .post-comment-btn:hover,
 .post-share-btn:hover {
   background-color: #7f8fc5;
+}
+
+.add-comment {
+  text-decoration: none;
+  width: 92.5%;
+  margin: 2.5%;
+  cursor: pointer;
+  border: 1px solid #003c8a;
+  font-size: 2vh;
+  padding: 1vh;
+}
+
+.show-comment {
+  font-size: 1.5vh;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 2.5%;
+}
+
+.comment {
+  font-size: 1.8vh;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 2.5%;
+  color: black;
 }

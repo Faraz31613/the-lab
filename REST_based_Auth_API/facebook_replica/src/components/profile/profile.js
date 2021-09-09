@@ -2,9 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 
+import * as selector from "components/selector";
+
 const Profile = () => {
-  const user = useSelector((state) => state.authReducer.signIn);
-  const isSignedIn = user.isSignedIn;
+  const signedInCreds = useSelector(selector.signedInCreds);
+  const user = signedInCreds.user;
+  const isSignedIn = signedInCreds.isSignedIn;
 
   if (isSignedIn) {
     localStorage.setItem("refreshPath", "/profile");
@@ -15,7 +18,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <h3>{user.user.f_name + " " + user.user.l_name}</h3>
+      <h3>{user.f_name + " " + user.l_name}</h3>
     </div>
   );
 };

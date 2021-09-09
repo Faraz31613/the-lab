@@ -11,7 +11,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # The default result (access/refresh tokens)
         data = super(MyTokenObtainPairSerializer, self).validate(attrs)
-        print(data)
         # Custom data you want to include
         data.update({"f_name": self.user.first_name})
         data.update({"l_name": self.user.last_name})

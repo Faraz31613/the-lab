@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+import * as selector from "components/selector";
 import { MenuItems } from "./menuItems";
 
 import "./navbar.css";
@@ -9,20 +10,19 @@ import "./navbar.css";
 const Navbar = () => {
   const [menuItemClicked, setMenuItemClicked] = useState(false);
 
-  const handleClick = () => {
-    setMenuItemClicked(!menuItemClicked);
-  };
-
-  const isSignedIn = useSelector(
-    (state) => state.authReducer.signIn["isSignedIn"]
-  );
+  const isSignedIn = useSelector(selector.isSignedIn);
 
   return (
     <nav className="navbar-items">
       <h1 className="navbar-logo">
         <i className="fab fa-facebook-square"></i> Facebook Replica
       </h1>
-      <div className="menu-icon" onClick={handleClick}>
+      <div
+        className="menu-icon"
+        onClick={() => {
+          setMenuItemClicked(!menuItemClicked);
+        }}
+      >
         <i className={menuItemClicked ? "fas fa-times" : "fas fa-bars"}></i>
       </div>
       <ul className={menuItemClicked ? "nav-menu active" : "nav-menu"}>
