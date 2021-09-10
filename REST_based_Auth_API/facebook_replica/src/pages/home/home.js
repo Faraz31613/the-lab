@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
 
 import * as postActions from "modules/post/action";
 import * as likeActions from "modules/like/action";
 import * as selector from "components/selector";
 // import * as navigator from "components/authNavigation"
 
-import Post from "./post";
+import Post from "components/post";
 
 import "./home.css";
 
 const Home = () => {
-  const [addCommentFlag, setAddCommentFlag] = useState(false);
-  const [postIdForComment, setPostIdForComment] = useState();
+  // const [addCommentFlag, setAddCommentFlag] = useState(false);
+  // const [postIdForComment, setPostIdForComment] = useState();
 
   const signedInCreds = useSelector(selector.signedInCreds);
   const authToken = signedInCreds.user.access;
@@ -24,11 +23,11 @@ const Home = () => {
   const posts = useSelector(selector.posts);
 
   useEffect(() => {
-    if (!isSignedIn) {
-      return <Redirect to="/signIn" />;
-    }
+    // if (!isSignedIn) {
+    //   return <Redirect to="/signIn" />;
+    // }
     if (isSignedIn) {
-      localStorage.setItem("user", encodeURI(JSON.stringify(signedInCreds)));
+      // localStorage.setItem("user", encodeURI(JSON.stringify(signedInCreds)));
       localStorage.setItem("refreshPath", "/");
     }
 
@@ -36,9 +35,9 @@ const Home = () => {
     dispatch(likeActions.getSignedInUserLikes(authToken));
   }, [authToken]);
 
-  if (!isSignedIn) {
-    return <Redirect to="/signIn" />;
-  }
+  // if (!isSignedIn) {
+  //   return <Redirect to="/signIn" />;
+  // }
 
   return (
     <div className="home-container">
@@ -49,10 +48,10 @@ const Home = () => {
         {posts.map((post) => {
           return (
             <Post
-              addCommentFlag={addCommentFlag}
-              postIdForComment={postIdForComment}
-              setAddCommentFlag={setAddCommentFlag}
-              setPostIdForComment={setPostIdForComment}
+              // addCommentFlag={addCommentFlag}
+              // postIdForComment={postIdForComment}
+              // setAddCommentFlag={setAddCommentFlag}
+              // setPostIdForComment={setPostIdForComment}
               post={post}
               key = {post.id}
             />

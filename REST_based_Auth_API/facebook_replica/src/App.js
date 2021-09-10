@@ -2,14 +2,15 @@ import { Provider } from "react-redux";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import ReactNotification from "react-notifications-component";
 
-import Home from "./components/home/home";
-import SignUp from "./components/signUp/signUp";
-import SignIn from "./components/signIn/signIn";
+import Home from "./pages/home/home";
+import SignUp from "./pages/signUp/signUp";
+import SignIn from "./pages/signIn/signIn";
 import Logout from "components/logout";
-import Profile from "components/profile/profile";
-import Friends from "components/friends/friends";
-import Notifications from "components/notifications/notifications";
-import Navbar from "components/navbar/navbar";
+import Profile from "pages/profile/profile";
+import Friends from "pages/friends/friends";
+import Notifications from "pages/notifications/notifications";
+import Navbar from "pages/navbar/navbar";
+import ProtectedRoute from "components/protected-route/protected-route"
 
 import store from "modules/store";
 
@@ -25,27 +26,27 @@ function App() {
           <Navbar />
           <div>
             <Switch>
-              <Route path="/" exact>
+              <ProtectedRoute path="/" exact>
                 <Home />
-              </Route>
+              </ProtectedRoute>
               <Route path="/signUp">
                 <SignUp />
               </Route>
               <Route path="/signIn">
                 <SignIn />
               </Route>
-              <Route path="/logout">
+              <ProtectedRoute path="/logout">
                 <Logout />
-              </Route>
-              <Route path="/profile">
+              </ProtectedRoute>
+              <ProtectedRoute path="/profile">
                 <Profile />
-              </Route>
-              <Route path="/friends">
+              </ProtectedRoute>
+              <ProtectedRoute path="/friends">
                 <Friends />
-              </Route>
-              <Route path="/notifications">
+              </ProtectedRoute>
+              <ProtectedRoute path="/notifications">
                 <Notifications />
-              </Route>
+              </ProtectedRoute>
             </Switch>
           </div>
         </BrowserRouter>

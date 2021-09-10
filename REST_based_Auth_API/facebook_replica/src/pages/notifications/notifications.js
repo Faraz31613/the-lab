@@ -4,27 +4,23 @@ import { Redirect } from "react-router-dom";
 
 import * as actions from "modules/notification/action";
 import * as selector from "components/selector";
-import * as hooks from "./hooks";
+import * as hooks from "components/hooks";
 
 import "./notifications.css";
 
 const Notifications = () => {
   const [readFlag, setReadFlag] = useState(false);
+  const [notificationId, setNotificationId] = useState(null);
 
   const dispatch = useDispatch();
-  // const user = useSelector((state) => state.authReducer.signIn);
-  // const authToken = user.user.access;
-  // const isSignedIn = user.isSignedIn;
 
   const signedInCreds = useSelector(selector.signedInCreds);
   const authToken = signedInCreds.user.access;
   const isSignedIn = signedInCreds.isSignedIn;
 
+  const markAsRead = hooks.useMarkAsRead(authToken, notificationId);
+
   useEffect(() => {
-    console.log("in notifications");
-    if (!isSignedIn) {
-      return <Redirect to="/signIn" />;
-    }
     if (isSignedIn) {
       localStorage.setItem("refreshPath", "/notifications");
     }
@@ -55,15 +51,10 @@ const Notifications = () => {
               </a>
               <a
                 onClick={(e) => {
-                  hooks.masrkAsRead(
-                    e,
-                    dispatch,
-                    authToken,
-                    notification.id,
-                    setReadFlag
-                  );
+                  setNotificationId(notification.id);
+                  markAsRead(authToken, notificationId);
+                  setReadFlag(true);
                 }}
-                notificationId={notification.id}
                 className={
                   notification.is_read === false
                     ? "mark-read"
@@ -74,7 +65,6 @@ const Notifications = () => {
               </a>
               <hr className="notification-seperator"></hr>
             </li>
-            // {/* <hr className="notification-seperator"></hr> */}
           );
         })}
       </ul>

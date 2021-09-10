@@ -1,8 +1,8 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import * as selector from "components/selector";
-import * as hooks from "./hooks";
+import * as hooks from "components/hooks";
 
 const Like = (props) => {
   const postId = props.postId;
@@ -14,21 +14,23 @@ const Like = (props) => {
   const userId = user.id;
   const authToken = user.access;
 
-  const dispatch = useDispatch();
-
-  var isLiked = false;
-  var likeId = null;
+  let isLiked = false;
+  let likeId = null;
   signedInUserLikes.forEach((like) => {
     if (like.post === postId) {
       isLiked = like.is_like;
       likeId = like.id;
     }
   });
+  const handlePostLike = hooks.useHandlePostLike(
+    isLiked,
+    likeId,
+    postId,
+    userId,
+    authToken
+  );
   return (
-    <button
-      className="post-like-btn"
-      onClick={() => hooks.handlePostLike(dispatch, isLiked, likeId, postId, userId, authToken)}
-    >
+    <button className="post-like-btn" onClick={() => handlePostLike()}>
       <i className={isLiked ? "fas fa-thumbs-up" : "far fa-thumbs-up"}></i>{" "}
       {isLiked ? "liked" : "Like"}
     </button>

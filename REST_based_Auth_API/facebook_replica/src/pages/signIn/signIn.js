@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import * as hooks from "./hooks";
+import * as hooks from "components/hooks";
 import * as actions from "modules/authentication/action";
-import { notify } from "../notification";
+import { notify } from "../../components/notification";
 import * as selector from "components/selector";
 
 import "./signIn.css";
@@ -15,6 +15,7 @@ const SignIn = () => {
   const [usernameError, setUsernameError] = useState("");
 
   const isSignedInErrorMessage = useSelector(selector.isSignedInErrorMessage);
+  const signedInCreds = useSelector(selector.signedInCreds);
 
   const dispatch = useDispatch();
 
@@ -28,6 +29,7 @@ const SignIn = () => {
       alreadySignedIn === null &&
       isSignedInErrorMessage.SuccessOrErrorCode === 200
     ) {
+      localStorage.setItem("user", encodeURI(JSON.stringify(signedInCreds)));  
       notify("Congratulations!", "Successfully Signed In", "success");
       return <Redirect to="/" />;
     }
@@ -41,6 +43,9 @@ const SignIn = () => {
       }
     }
   }, [isSignedInErrorMessage]);
+
+  const signIn = hooks.useSignIn(username,password)
+  
   if (isSignedInErrorMessage.SuccessOrErrorCode === 200) {
     return <Redirect to={localStorage.getItem("refreshPath")} />;
   }
@@ -50,7 +55,8 @@ const SignIn = () => {
       <form
         className="signIn-form-container"
         onSubmit={(e) => {
-          hooks.signIn(e, dispatch, username, password);
+          e.preventDefault();
+          signIn();
         }}
       >
         <input

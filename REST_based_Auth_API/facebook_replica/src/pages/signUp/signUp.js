@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 
-import * as hooks from "./hooks";
-import { notify } from "../notification";
+import * as hooks from "components/hooks";
+import { notify } from "../../components/notification";
 import * as actions from "modules/authentication/action";
 import * as selector from "components/selector";
 
@@ -63,22 +63,27 @@ const SignUp = () => {
   if (isSignedUp.SuccessOrErrorCode === 200) {
     return <Redirect to="/signIn" />;
   }
+
+  const signUp = hooks.useSignUp(
+    username,
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmedPassword
+  );
+
   return (
     <div className="signUp-container">
       <form
         className="signUp-form-container"
         onSubmit={(e) => {
-          hooks.signUp(
-            e,
-            dispatch,
-            username,
-            firstName,
-            lastName,
-            email,
-            password,
-            confirmedPassword,
-            setConfirmPasswordError
-          );
+          e.preventDefault();
+          if (password !== confirmedPassword) {
+            setConfirmPasswordError("password does not match");
+            return;
+          }
+          signUp();
         }}
       >
         <input
@@ -88,6 +93,7 @@ const SignUp = () => {
           placeholder="username"
           required
         ></input>
+        {usernameError && <p>{usernameError}</p>}
         <input
           name="firstName"
           value={firstName}
@@ -102,7 +108,6 @@ const SignUp = () => {
           placeholder="lastName"
           required
         ></input>
-        {usernameError && <p>{usernameError}</p>}
         <input
           name="email"
           value={email}

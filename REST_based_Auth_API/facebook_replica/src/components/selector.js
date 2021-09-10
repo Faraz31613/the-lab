@@ -1,18 +1,18 @@
 //for navidator,navbar
-export const isSignedIn = (state) => state.authReducer.signIn.isSignedIn;
+export const isSignedIn = (state) => state.auth.signIn.isSignedIn;
 
 //for signUp
-export const isSignedUpErrorMessage = (state) => state.authReducer.message;
+export const isSignedUpErrorMessage = (state) => state.auth.message;
 //for signIn
-export const isSignedInErrorMessage = (state) => state.authReducer.message;
+export const isSignedInErrorMessage = (state) => state.auth.message;
 
 //for home,notifications
-export const signedInCreds = (state) => state.authReducer.signIn;
+export const signedInCreds = (state) => state.auth.signIn;
 
 //for home
-export const posts = (state) => state.postReducer.posts;
-export const signedInUserLikes = (state) => state.likeReducer.likes;
-export const comments = (state) => state.commentReducer.comments;
+export const posts = (state) => state.post.posts;
+export const signedInUserLikes = (state) => state.like.likes;
+export const comments = (state) => state.comment.comments;
 
 //for notifications
-export const notifications = (state) => state.notificationReducer.notifications;
+export const notifications = (state) => state.notification.notifications;

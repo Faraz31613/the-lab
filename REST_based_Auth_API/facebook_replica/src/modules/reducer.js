@@ -7,9 +7,9 @@ import likeReducer from "./like/reducer";
 import commentReducer from "./comment/reducer";
 
 export default combineReducers({
-  notificationReducer,
-  authReducer,
-  postReducer,
-  likeReducer,
-  commentReducer,
+  notification: notificationReducer,
+  auth : authReducer,
+  post : postReducer,
+  like : likeReducer,
+  comment :commentReducer ,
 });
