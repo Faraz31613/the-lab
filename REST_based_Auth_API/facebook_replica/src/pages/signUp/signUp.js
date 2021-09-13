@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 
-import * as hooks from "components/hooks";
+import * as hooks from "modules/hooks";
 import { notify } from "../../components/notification";
 import * as actions from "modules/authentication/action";
-import * as selector from "components/selector";
+import * as selector from "modules/selector";
 
 import "./signUp.css";
 

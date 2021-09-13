@@ -1,7 +1,7 @@
 import React from "react";
 
 const User = (props) => {
-    const postAuthor = props.user
+  const postAuthor = props.user;
   return (
     <header className="post-author">
       <i className="fas fa-user"></i>

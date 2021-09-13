@@ -10,7 +10,7 @@ import Profile from "pages/profile/profile";
 import Friends from "pages/friends/friends";
 import Notifications from "pages/notifications/notifications";
 import Navbar from "pages/navbar/navbar";
-import ProtectedRoute from "components/protected-route/protected-route"
+import ProtectedRoute from "components/protected-route/protected-route";
 
 import store from "modules/store";
 

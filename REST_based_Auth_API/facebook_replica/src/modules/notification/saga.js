@@ -16,6 +16,7 @@ export function* getNotificationsSaga() {
 }
 
 function* markAsRead(action) {
+  console.log("in saga", action.payload.id);
   const response = yield call(httpServices.markAsRead, action.payload);
   if (response.status === 200) {
     yield put(actions.getNotification(action.payload["authToken"]));

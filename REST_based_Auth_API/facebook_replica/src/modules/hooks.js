@@ -1,18 +1,19 @@
 import { useDispatch } from "react-redux";
 
+import * as postActions from "modules/post/action";
 import * as likeActions from "modules/like/action";
 import * as commentActions from "modules/comment/action";
 import * as notificationActions from "modules/notification/action";
 import * as signInActions from "modules/authentication/action";
 import * as signUpActions from "modules/authentication/action";
 
-export const useHandlePostLike = (
-  isLiked,
-  likeId,
-  postId,
-  userId,
-  authToken
-) => {
+export const useGetPosts = (authToken) => {
+  const dispatch = useDispatch();
+  return () => {
+    dispatch(postActions.getPosts(authToken));
+  };
+};
+export const useHandlePostLike = (isLiked, postId, userId, authToken) => {
   const dispatch = useDispatch();
   if (isLiked === false) {
     const createLikeCred = {
@@ -30,8 +31,8 @@ export const useHandlePostLike = (
     };
   } else {
     const deleteLikeCred = {
-      likeId: likeId,
-      authToken: authToken,
+      post: postId,
+      authToken,
     };
     return () => {
       dispatch(likeActions.unlike(deleteLikeCred));
@@ -39,7 +40,13 @@ export const useHandlePostLike = (
   }
 };
 
-export const useHandlePostComment = (postId, userId, comment, authToken) => {
+export const useHandlePostComment = (
+  postId,
+  userId,
+  comment,
+  authToken,
+  setComment
+) => {
   const dispatch = useDispatch();
   const commentCreds = {
     comment: {
@@ -50,12 +57,21 @@ export const useHandlePostComment = (postId, userId, comment, authToken) => {
     },
     authToken: authToken,
   };
+  if (comment === "") {
+    return;
+  }
   return () => {
     dispatch(commentActions.addComment(commentCreds));
+    setComment("");
   };
 };
 
-export const useHandleShowComments = (postId, authToken) => {
+export const useHandleShowComments = (
+  postId,
+  authToken,
+  showCommentFlag,
+  setShowCommentFlag
+) => {
   const dispatch = useDispatch();
   const commentedPostCreds = {
     post: postId,
@@ -63,16 +79,23 @@ export const useHandleShowComments = (postId, authToken) => {
   };
   return () => {
     dispatch(commentActions.getComments(commentedPostCreds));
+    setShowCommentFlag(!showCommentFlag);
   };
 };
 
-export const useMarkAsRead = (authToken, notificationId) => {
-  const dispatch = useDispatch();
-  const notificationCred = {
-    authToken,
-    id: notificationId,
-  };
+export const useGetNotification = (authToken) => {
+  const  dispatch = useDispatch()
   return () => {
+    dispatch(notificationActions.getNotification(authToken));
+  }
+}
+export const useMarkAsRead = () => {
+  const dispatch = useDispatch();
+  return (authToken, notificationId) => {
+    const notificationCred = {
+      authToken,
+      id: notificationId,
+    };
     dispatch(notificationActions.markAsRead(notificationCred));
   };
 };

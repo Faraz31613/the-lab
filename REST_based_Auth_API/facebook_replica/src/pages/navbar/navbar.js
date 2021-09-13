@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import * as selector from "components/selector";
+import * as selector from "modules/selector";
 import { MenuItems } from "./menuItems";
 
 import "./navbar.css";

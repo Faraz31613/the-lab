@@ -26,15 +26,15 @@ const authReducer = (state = initialState, action) => {
         },
         isValidToken: false,
       };
-      case actionTypes.ALREADY_SIGNED_IN:
-        return {
-          ...state,
-          message: {
-            SuccessOrErrorText: "success",
-            SuccessOrErrorCode: 200,
-          },
-          signIn: action.payload,
-        }
+    case actionTypes.ALREADY_SIGNED_IN:
+      return {
+        ...state,
+        message: {
+          SuccessOrErrorText: "success",
+          SuccessOrErrorCode: 200,
+        },
+        signIn: action.payload,
+      };
     default:
       return state;
   }

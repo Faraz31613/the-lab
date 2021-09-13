@@ -8,8 +8,8 @@ import commentReducer from "./comment/reducer";
 
 export default combineReducers({
   notification: notificationReducer,
-  auth : authReducer,
-  post : postReducer,
-  like : likeReducer,
-  comment :commentReducer ,
+  auth: authReducer,
+  post: postReducer,
+  like: likeReducer,
+  comment: commentReducer,
 });

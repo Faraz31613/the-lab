@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import User from "./user";
 import Like from "./like";
@@ -12,7 +12,7 @@ const Post = (props) => {
 
       <p className="post-text">{post.text_post}</p>
 
-      <Like postId={post.id} />
+      <Like post={post} />
 
       <Comment post={post} />
     </section>

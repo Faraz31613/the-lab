@@ -6,11 +6,7 @@ import {
   markAsReadSaga,
 } from "modules/notification/saga";
 import { getPostsSaga } from "modules/post/saga";
-import {
-  likeSaga,
-  getSignedInUserLikesSaga,
-  unlikeSaga,
-} from "modules/like/saga";
+import { likeSaga, unlikeSaga } from "modules/like/saga";
 import { addCommentSaga, getCommentsSaga } from "modules/comment/saga";
 
 export default function* rootSaga() {
@@ -21,7 +17,6 @@ export default function* rootSaga() {
     markAsReadSaga(),
     getPostsSaga(),
     likeSaga(),
-    getSignedInUserLikesSaga(),
     unlikeSaga(),
     addCommentSaga(),
     getCommentsSaga(),

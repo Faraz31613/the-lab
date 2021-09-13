@@ -10,31 +10,12 @@ export async function like(createLikeCred) {
   }
 }
 
-export async function getSignedInUserLikes(authToken) {
-  try {
-    return await http.get("/signedInUserLikesView/", {
-      // params: {
-      //   post: likedPostOrCommentCred["likedCred"].post,
-      //   comment: likedPostOrCommentCred["likedCred"].comment,
-      // },
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-  } catch (error) {
-    return error.response;
-  }
-}
-
 export async function unlike(deleteLikeCred) {
   try {
-    return await http.delete(
-      "/like/",
-      {
-        params:{id: deleteLikeCred["likeId"]},
-        headers: { Authorization: `Bearer ${deleteLikeCred["authToken"]}` },
-      }
-    );
+    return await http.delete("/like/", {
+      params: { id: deleteLikeCred["post"] },
+      headers: { Authorization: `Bearer ${deleteLikeCred["authToken"]}` },
+    });
   } catch (error) {
     return error.response;
   }

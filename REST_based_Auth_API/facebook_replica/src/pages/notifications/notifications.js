@@ -1,38 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
 
 import * as actions from "modules/notification/action";
-import * as selector from "components/selector";
-import * as hooks from "components/hooks";
+import * as selector from "modules/selector";
+import * as hooks from "modules/hooks";
 
 import "./notifications.css";
 
 const Notifications = () => {
-  const [readFlag, setReadFlag] = useState(false);
-  const [notificationId, setNotificationId] = useState(null);
-
-  const dispatch = useDispatch();
-
   const signedInCreds = useSelector(selector.signedInCreds);
   const authToken = signedInCreds.user.access;
   const isSignedIn = signedInCreds.isSignedIn;
 
-  const markAsRead = hooks.useMarkAsRead(authToken, notificationId);
+  const markAsRead = hooks.useMarkAsRead();
+  const getNotification = hooks.useGetNotification(authToken);
 
   useEffect(() => {
     if (isSignedIn) {
       localStorage.setItem("refreshPath", "/notifications");
     }
 
-    dispatch(actions.getNotification(authToken));
-  }, [authToken, readFlag]);
+    getNotification();
+  }, [authToken]);
 
   const notifications = useSelector(selector.notifications);
 
-  if (!isSignedIn) {
-    return <Redirect to="/signIn" />;
-  }
   return (
     <div className="notifications-container">
       <ul className="notifications-list">
@@ -50,10 +42,8 @@ const Notifications = () => {
                 {notification.notification}
               </a>
               <a
-                onClick={(e) => {
-                  setNotificationId(notification.id);
-                  markAsRead(authToken, notificationId);
-                  setReadFlag(true);
+                onClick={() => {
+                  markAsRead(authToken, notification.id);
                 }}
                 className={
                   notification.is_read === false

@@ -5,7 +5,7 @@ import { request } from "./request";
 
 //   const {auth, ...config} = orginalconfig;
 //   const authToken = localStorage.get("key");
-//   const headers = config.auth 
+//   const headers = config.auth
 //       ? {...config.headers, Authorization: `Bearer: ${authToken}`}
 //       : config.headers;
 //   return http.request({headers, ...config});
@@ -14,7 +14,7 @@ import { request } from "./request";
 // export const exampleRequest = async(comment) => {
 //   try {
 //     return await request({
-//      url: "/comment/", 
+//      url: "/comment/",
 //      auth: true,
 //      method: "get",
 //      data: comment,
@@ -29,7 +29,7 @@ import { request } from "./request";
 export async function addComment(commentCred) {
   // try {
   //   return await request({
-  //    url: "/comment/", 
+  //    url: "/comment/",
   //    auth: true,
   //    method: "post",
   //    data: commentCred["comment"],

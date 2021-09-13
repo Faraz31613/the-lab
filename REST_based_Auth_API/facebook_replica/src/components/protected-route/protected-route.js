@@ -1,14 +1,11 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-import * as actions from "modules/authentication/action";
-import * as selector from "components/selector";
-import { notify } from "../notification";
+import * as selector from "modules/selector";
 
 export const ProtectedRoute = ({ children }) => {
-  const signedInCreds = useSelector(selector.signedInCreds);
-  const isSignedIn = signedInCreds.isSignedIn;
+  const { isSignedIn  } = useSelector(selector.signedInCreds);
 
   if (!isSignedIn) {
     return <Redirect to="/signIn" />;

@@ -398,8 +398,8 @@ class ShowNotifications(viewsets.ModelViewSet):
         signed_in_user_id = self.request.user.id
         signed_in_user = self.request.user
 
-        notification_id = request.data["id"]
-
+        notification_id = self.request.data["id"]
+        print(notification_id)
         self.queryset.filter(pk=notification_id).update(is_read=True)
 
         data = self.serializer_class(
@@ -495,17 +495,21 @@ class LikeView(viewsets.ModelViewSet):
         return Response(self.serializer_class(like).data)
 
     def destroy(self, request, *args, **kwargs):
-        print("unlike")
         signed_in_user = self.request.user.id
 
-        like_id = self.request.GET.get("id")
+        post_id = self.request.GET.get("id")
+        print(post_id)
 
         like = get_object_or_404(
-            Like, id=like_id)
+            Like, post=post_id,user=signed_in_user)
+
+        print(like)
 
         post_or_comment_author = like.post.user
 
-        self.queryset.filter(id=like_id).delete()
+        print(post_or_comment_author)
+
+        self.queryset.get(post=post_id,user=signed_in_user).delete()
 
         Notification.objects.filter(
             user=post_or_comment_author,

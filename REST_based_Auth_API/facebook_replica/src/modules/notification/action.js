@@ -6,10 +6,13 @@ export const getNotification = (data) => ({
   payload: data,
 });
 
-export const markAsRead = (data) => ({
-  type: actionTypes.MARK_AS_READ,
-  payload: data,
-});
+export const markAsRead = (data) => {
+  console.log("in action", data);
+  return {
+    type: actionTypes.MARK_AS_READ,
+    payload: data,
+  };
+};
 
 //reducer actions
 export const showNotifications = (notifications) => ({

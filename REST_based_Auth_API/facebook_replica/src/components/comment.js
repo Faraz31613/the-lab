@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
-import * as selector from "components/selector";
-import * as hooks from "components/hooks";
+import * as selector from "modules/selector";
+import * as hooks from "modules/hooks";
 
 const Comment = (props) => {
   const post = props.post;
@@ -22,10 +22,16 @@ const Comment = (props) => {
     post.id,
     userId,
     comment,
-    authToken
+    authToken,
+    setComment
   );
 
-  const handleShowComments = hooks.useHandleShowComments(post.id, authToken);
+  const handleShowComments = hooks.useHandleShowComments(
+    post.id,
+    authToken,
+    showCommentFlag,
+    setShowCommentFlag
+  );
 
   return (
     <>
@@ -48,9 +54,8 @@ const Comment = (props) => {
           setComment(e.target.value);
         }}
         onKeyPress={(e) => {
-          if (comment !== "" && e.key === "Enter") {
+          if (e.key === "Enter") {
             handlePostComment();
-            setComment("");
           }
         }}
         style={addCommentFlag ? { display: "block" } : { display: "none" }}
@@ -61,7 +66,6 @@ const Comment = (props) => {
         className="show-comment"
         onClick={() => {
           handleShowComments();
-          setShowCommentFlag(!showCommentFlag);
         }}
       >
         Show Comments...

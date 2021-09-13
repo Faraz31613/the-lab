@@ -1,30 +1,21 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import * as selector from "components/selector";
-import * as hooks from "components/hooks";
+import * as selector from "modules/selector";
+import * as hooks from "modules/hooks";
 
 const Like = (props) => {
-  const postId = props.postId;
+  const postId = props.post.id;
+  const isLiked = props.post.is_liked;
 
-  const signedInUserLikes = useSelector(selector.signedInUserLikes);
   const signedInCred = useSelector(selector.signedInCreds);
 
   const user = signedInCred.user;
   const userId = user.id;
   const authToken = user.access;
 
-  let isLiked = false;
-  let likeId = null;
-  signedInUserLikes.forEach((like) => {
-    if (like.post === postId) {
-      isLiked = like.is_like;
-      likeId = like.id;
-    }
-  });
   const handlePostLike = hooks.useHandlePostLike(
     isLiked,
-    likeId,
     postId,
     userId,
     authToken
