@@ -1,7 +1,7 @@
 from django.contrib.auth import models
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenVerifySerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from django.shortcuts import get_object_or_404
 
@@ -10,19 +10,14 @@ from .models import Comment, Like, Message, Notification, Post, Request, Friend
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        # The default result (access/refresh tokens)
         data = super(MyTokenObtainPairSerializer, self).validate(attrs)
-        # Custom data you want to include
+
         data.update({"f_name": self.user.first_name})
         data.update({"l_name": self.user.last_name})
         data.update({"user": self.user.username})
         data.update({"id": self.user.id})
 
-        # and everything else you want to send in the response
         return data
-
-# class MyTokenVerifySerializer(TokenVerifySerializer):
-#     pass
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -56,26 +51,23 @@ class HomeSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer()
     is_liked = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Post
-        fields = ("id", "text_post", "user","is_liked")
+        fields = ("id", "text_post", "user", "is_liked")
 
     def get_is_liked(self, post):
         signed_in_user_Id = self.context['request'].user.id
         try:
-            get_object_or_404(Like,post=post.id,user=signed_in_user_Id)
+            get_object_or_404(Like, post=post.id, user=signed_in_user_Id)
             return True
         except:
             return False
-    
 
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ("id", "text_post", "user")    
-
+        fields = ("id", "text_post", "user")
 
 
 class CommentSerializer(serializers.ModelSerializer):

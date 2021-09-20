@@ -13,8 +13,8 @@ class Post(models.Model):
 
 class Comment(models.Model):
     class CommentType:
-        POST = "P"  # comment on post
-        COMMENT = "C"  # comment on comment:reply
+        POST = "P"
+        COMMENT = "C"
 
         comment_type = (
             (POST, "Comment"),
@@ -110,8 +110,8 @@ class Notification(models.Model):
 
 class Like(models.Model):
     class LikeType:
-        POST = "P"  # liked a post
-        COMMENT = "C"  # Liked comment:reply
+        POST = "P"
+        COMMENT = "C"
 
         like_type = (
             (POST, "Post"),
@@ -129,8 +129,8 @@ class Like(models.Model):
     is_like = models.BooleanField(default=False)
 
     def __str__(self):
-        post_or_comment = "Post" if self.comment==None else "Comment"
-        likes_or_unliked = "Liked" if self.is_like== True else "Unliked"
+        post_or_comment = "Post" if self.comment == None else "Comment"
+        likes_or_unliked = "Liked" if self.is_like == True else "Unliked"
         return f"{post_or_comment} is {likes_or_unliked}"
 
 

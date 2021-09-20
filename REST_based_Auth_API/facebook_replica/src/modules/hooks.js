@@ -84,11 +84,11 @@ export const useHandleShowComments = (
 };
 
 export const useGetNotification = (authToken) => {
-  const  dispatch = useDispatch()
+  const dispatch = useDispatch();
   return () => {
     dispatch(notificationActions.getNotification(authToken));
-  }
-}
+  };
+};
 export const useMarkAsRead = () => {
   const dispatch = useDispatch();
   return (authToken, notificationId) => {
